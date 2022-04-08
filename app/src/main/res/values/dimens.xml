@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--  Progress Dialog  -->
+    <dimen name="progress_dialog_content_padding">10dp</dimen>
+    <dimen name="progress_bar_size">50dp</dimen>
+    <dimen name="progress_text_marginStart">16dp</dimen>
+    <dimen name="progress_text_size">16sp</dimen>
+    <!--  !Progress Dialog  -->
+    <!--  Splash Screen  -->
+    <dimen name="splash_screen_title_text_size">84sp</dimen>
+    <dimen name="splash_screen_title_padding">20dp</dimen>
+    <!--  !Splash Screen  -->
+    <!--  Intro Screen  -->
+    <dimen name="intro_title_padding">20dp</dimen>
+    <dimen name="intro_title_text_size">60sp</dimen>
+    <dimen name="intro_main_text_padding_top">10dp</dimen>
+    <dimen name="intro_main_text_size">26sp</dimen>
+    <dimen name="intro_secondary_text_padding_top">10dp</dimen>
+    <dimen name="intro_secondary_text_size">18sp</dimen>
+    <dimen name="intro_btn_margin_start_end">20dp</dimen>
+    <dimen name="intro_btn_text_size">20sp</dimen>
+    <dimen name="intro_btn_sign_in_margin_top">40dp</dimen>
+    <dimen name="intro_btn_sign_up_margin_top">20dp</dimen>
+    <dimen name="toolbar_title_text_size">18sp</dimen>
+    <!--  !Intro Screen  -->
+    <!--  SignUp Screen  -->
+    <dimen name="sign_up_margin_start_end">25dp</dimen>
+    <dimen name="sign_up_secondary_text_size">16sp</dimen>
+    <dimen name="sign_up_card_view_margin_top">60dp</dimen>
+    <dimen name="card_view_elevation">10dp</dimen>
+    <dimen name="card_view_corner_radius">10dp</dimen>
+    <dimen name="et_text_size">16sp</dimen>
+    <dimen name="sign_up_til_margin_start_end">16dp</dimen>
+    <dimen name="card_view_layout_content_padding">16dp</dimen>
+    <dimen name="sign_up_til_margin_top">20dp</dimen>
+    <!--  !SignUp Screen  -->
+    <!--  Main Screen  -->
+    <dimen name="height_of_nav_main">200dp</dimen>
+    <dimen name="nav_image_size">80dp</dimen>
+    <dimen name="nav_content_margin_StartEnd">16dp</dimen>
+    <dimen name="nav_image_circular_border_width">1dp</dimen>
+    <dimen name="nav_content_margin_top">6dp</dimen>
+    <dimen name="nav_username_text_size">18sp</dimen>
+    <dimen name="nav_email_text_size">14sp</dimen>
+    <dimen name="nav_user_image_margin_top">60dp</dimen>
+    <dimen name="nav_divider_height">1dp</dimen>
+    <!--  !Main Screen  -->
+    <!--  MyProfile Screen  -->
+    <dimen name="my_profile_screen_content_margin_start_end">16dp</dimen>
+    <dimen name="my_profile_screen_content_margin_top_bottom">10dp</dimen>
+    <dimen name="my_profile_screen_content_padding">16dp</dimen>
+    <dimen name="my_profile_user_image_size">100dp</dimen>
+    <dimen name="my_profile_user_image_margin_top_bottom">10dp</dimen>
+    <dimen name="my_profile_name_til_margin_top">25dp</dimen>
+    <dimen name="my_profile_btn_update_margin_top">30dp</dimen>
+    <dimen name="my_profile_et_email_margin_top">20dp</dimen>
+    <dimen name="btn_padding_top_bottom">8dp</dimen>
+    <dimen name="btn_text_size">18sp</dimen>
+    <dimen name="my_profile_change_password_text_size">18sp</dimen>
+    <dimen name="my_profile_change_password_margin_bottom">20dp</dimen>
+    <dimen name="et_text_size_small">12sp</dimen>
+    <dimen name="new_password_margin_top">5dp</dimen>
+    <dimen name="btn_text_size_small">12sp</dimen>
+    <dimen name="btn_padding_top_bottom_small">4dp</dimen>
+    <dimen name="btn_margin_start_end_bottom_small">16dp</dimen>
+    <dimen name="add_trip_floating_button_margin">16dp</dimen>
+    <dimen name="toolbar_icon_margin">10dp</dimen>
+    <dimen name="app_bar_main_title_size">30sp</dimen>
+    <dimen name="fab_border_width">0dp</dimen>
+    <!--  !MyProfile Screen  -->
+</resources>

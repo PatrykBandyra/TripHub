@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopUpOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="MainTitleStyle">
+        <item name="fontFamily">@font/hurricane_regular</item>
+    </style>
+</resources>

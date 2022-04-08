@@ -1,0 +1,85 @@
+<resources>
+    <string name="app_name">TripHub</string>
+    <string name="please_wait">Please wait&#8230;</string>
+    <string name="please_click_back_again_to_exit">Please click back again to exit</string>
+
+    <!--  Intro Screen  -->
+    <string name="intro_image_content_description">image</string>
+    <string name="intro_main_text">Let\'s start planning your next trip</string>
+    <string name="intro_secondary_text">Plan your trips and share them with others.\nMake your trips unforgettable.</string>
+    <string name="intro_sign_in">Sign In</string>
+    <string name="intro_sign_up">Sign Up</string>
+    <!--  !Intro Screen  -->
+
+    <!--  SignUp Screen  -->
+    <string name="sign_up_title">SIGN UP</string>
+    <string name="sign_up_secondary_text">Enter name, email and password\n to register your new account</string>
+    <string name="name">Name</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="repeat_password">Repeat Password</string>
+    <string name="sign_up_name_error">Please enter a name</string>
+    <string name="sign_up_email_error">Please enter an email</string>
+    <string name="sign_up_password1_error">Please enter a password</string>
+    <string name="sign_up_password2_error">Please repeat the password</string>
+    <string name="sign_up_passwords_different_error">Entered passwords are different</string>
+    <string name="sign_up_success">Registration success</string>
+    <!--  !SignUp Screen  -->
+
+    <!--  SignIn Screen  -->
+    <string name="sign_ip_title">SIGN IN</string>
+    <string name="sign_in_secondary_text">Enter your email and password to log in</string>
+    <string name="sign_in_email_error">Please enter an email</string>
+    <string name="sign_in_password_error">Please enter a password</string>
+    <string name="sign_in_error">Invalid email or password</string>
+    <string name="failed_to_load_user_data">Failed to load user data</string>
+    <string name="image_content_description">image</string>
+    <string name="nav_my_profile">My Profile</string>
+    <string name="nav_sign_out">Sign Out</string>
+    <string name="load_user_data_error">Could not load user data</string>
+    <!--  !SignIn Screen  -->
+
+    <!--  MyProfile Screen  -->
+    <string name="update">Update</string>
+    <string name="change_password">Change Password</string>
+    <string name="rationale_positive_button">GO TO SETTINGS</string>
+    <string name="cancel">Cancel</string>
+    <string name="rationale_message">It look like you have turned off permission required for this feature. It can be enabled under the Applications Settings.</string>
+    <string name="select_action">Select Action</string>
+    <string name="select_image_from_gallery">Select image from Gallery</string>
+    <string name="take_photo">Capture photo from Camera</string>
+    <string name="could_not_update_user">Could not update user data. Check your connection</string>
+    <string name="new_password">New Password</string>
+    <string name="repeat_new_password">Repeat New Password</string>
+    <string name="update_password">Update Password</string>
+    <string name="my_profile_enter_old_password">Please enter old password</string>
+    <string name="my_profile_enter_new_password">Please enter new password</string>
+    <string name="my_profile_repeat_new_password">Please repeat new password</string>
+    <string name="my_profile_entered_new_passwords_different_error">Entered new passwords are different</string>
+    <string name="my_profile_password_update_success">Password updated successfully</string>
+    <string name="my_profile_password_update_failure">Could not update the password. Error: %1$s</string>
+    <!--  !MyProfile Screen  -->
+
+    <!--  Main Screen  -->
+    <string name="add_trip">Add Trip</string>
+    <string name="menu">Menu</string>
+    <string name="chat">Chat</string>
+    <!--  !Main Screen  -->
+
+    <!--  Map Screen  -->
+    <string name="plan_your_trip">Plan Your Trip</string>
+    <string name="button_arrow_up">Button arrow up</string>
+    <string name="button_arrow_down">Button arrow down</string>
+    <string name="edit_mode">Edit Mode</string>
+    <string name="map_input_type">Map Input Type</string>
+    <string name="select">Select</string>
+    <string-array name="mapInputTypes">
+        <item>Marker</item>
+        <item>Polyline</item>
+        <item>Polygon</item>
+        <item>Circle</item>
+    </string-array>
+    <!--  !Map Screen  -->
+
+
+</resources>
