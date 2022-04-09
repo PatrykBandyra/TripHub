@@ -73,6 +73,8 @@
     <string name="edit_mode">Edit Mode</string>
     <string name="map_input_type">Map Input Type</string>
     <string name="select">Select</string>
+    <string name="find_place">Find Place</string>
+    <string name="go">GO</string>
     <string-array name="mapInputTypes">
         <item>Marker</item>
         <item>Polyline</item>
@@ -81,5 +83,12 @@
     </string-array>
     <!--  !Map Screen  -->
 
+    <!--  Add Trip Screen  -->
+    <string name="create_new_trip">Create New Trip</string>
+    <string name="description">Description</string>
+    <string name="create_trip">Create Trip</string>
+    <string name="add_trip_name_error">Please enter name of trip</string>
+
+    <!--  !Add Trip Screen  -->
 
 </resources>

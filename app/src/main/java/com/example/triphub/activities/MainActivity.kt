@@ -55,8 +55,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>(),
     }
 
     private fun setUpOnClickListeners() {
-        binding.appBarMain.fabCreateBoard.setOnClickListener {
-            startActivity(Intent(this, MapActivity::class.java))
+        binding.appBarMain.fabCreateTrip.setOnClickListener {
+            startActivity(Intent(this, AddTripActivity::class.java))
         }
     }
 
@@ -111,5 +111,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>(),
 
     fun onLoadUserDataFailure() {
         showErrorSnackBar(R.string.load_user_data_error)
+    }
+
+    override fun onBackPressed() {
+        doubleBackToExit()
     }
 }

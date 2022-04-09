@@ -1,17 +1,25 @@
 package com.example.triphub.activities
 
+import android.app.Activity
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import com.example.triphub.BuildConfig
 import com.example.triphub.R
 import com.example.triphub.databinding.ActivityMapBinding
+import com.example.triphub.utils.Constants
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.widget.Autocomplete
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 
 class MapActivity : BaseActivity<ActivityMapBinding>(), OnMapReadyCallback,
     GoogleMap.OnMarkerClickListener, GoogleMap.OnMarkerDragListener, GoogleMap.OnMapClickListener,
@@ -20,10 +28,20 @@ class MapActivity : BaseActivity<ActivityMapBinding>(), OnMapReadyCallback,
     private lateinit var mMap: GoogleMap
     private lateinit var marker: Marker
 
+    private var mMapInputType: String? = null
+    private var mTempLocation: LatLng? = null
+    private var mTempMarker: Marker? = null
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         setOnButtonClickedListeners()
+
+        if (!Places.isInitialized()) {
+            Places.initialize(this@MapActivity, BuildConfig.GOOGLE_API_KEY)
+        }
 
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
@@ -45,7 +63,72 @@ class MapActivity : BaseActivity<ActivityMapBinding>(), OnMapReadyCallback,
             binding.llTools.visibility = View.GONE
             binding.ibArrowUp.visibility = View.VISIBLE
         }
+        binding.actvMapInputType.setOnItemClickListener { adapterView, _, position, _ ->
+            mMapInputType = adapterView.getItemAtPosition(position).toString()
+            setUpToolsDependingOnMapInputType()
+        }
+        binding.etFindPlace.setOnClickListener {
+            try {
+                val fields = listOf(
+                    Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG,
+                    Place.Field.ADDRESS
+                )
+                val intent =
+                    Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields)
+                        .build(this@MapActivity)
+                placesResultLauncher.launch(intent)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+        binding.btnGoToPlace.setOnClickListener {
+            if (mTempLocation != null) {
+                mTempMarker?.remove()
+                mTempMarker = mMap.addMarker(
+                    MarkerOptions()
+                        .position(mTempLocation!!)
+                )
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mTempLocation, 16f))
+            }
+        }
     }
+
+    private val placesResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val place: Place = Autocomplete.getPlaceFromIntent(result.data!!)
+                mTempLocation = place.latLng!!
+                binding.etFindPlace.setText(place.address)
+
+                mTempMarker?.remove()
+                mTempMarker = mMap.addMarker(
+                    MarkerOptions()
+                        .position(mTempLocation!!)
+                )
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mTempLocation, 16f))
+            }
+        }
+
+    private fun setUpToolsDependingOnMapInputType() {
+        when (mMapInputType) {
+            Constants.Navigation.MARKER -> {
+
+            }
+            Constants.Navigation.POLYLINE -> {
+
+            }
+            Constants.Navigation.POLYGON -> {
+
+            }
+            Constants.Navigation.CIRCLE -> {
+
+            }
+            else -> {
+                throw Exception("setUpToolsDependingOnMapInputType() called when mMapInputType is NULL")
+            }
+        }
+    }
+
 
     override fun getViewBinding() = ActivityMapBinding.inflate(layoutInflater)
 
@@ -100,6 +183,7 @@ class MapActivity : BaseActivity<ActivityMapBinding>(), OnMapReadyCallback,
         val polygonOptions = PolygonOptions()
             .addAll(mutableListOf(m11, m22, m33, m44))
             .fillColor(0x7F00FF00)
+            .strokePattern(pattern)
             .addHole(
                 mutableListOf(
                     LatLng(14.0, 14.0),
@@ -119,8 +203,14 @@ class MapActivity : BaseActivity<ActivityMapBinding>(), OnMapReadyCallback,
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydneyLoc))
     }
 
+    override fun onMapClick(latLng: LatLng) {
+        mTempMarker?.remove()
+    }
+
     override fun onMarkerClick(marker: Marker): Boolean {
-        Toast.makeText(this, "My position ${marker.position}", Toast.LENGTH_SHORT).show()
+        if (marker == mTempMarker) {
+            mTempMarker?.remove()
+        }
 
         return false
     }
@@ -135,10 +225,6 @@ class MapActivity : BaseActivity<ActivityMapBinding>(), OnMapReadyCallback,
 
     override fun onMarkerDragEnd(marker: Marker) {
         Toast.makeText(this, "New position ${marker.position}", Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onMapClick(latLng: LatLng) {
-        Toast.makeText(this, "Map clicked at $latLng", Toast.LENGTH_SHORT).show()
     }
 
     override fun onInfoWindowClick(marker: Marker) {

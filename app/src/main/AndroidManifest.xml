@@ -17,6 +17,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TripHub"
         tools:ignore="LockedOrientationActivity">
+        <activity
+            android:name=".activities.AddTripActivity"
+            android:exported="false" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

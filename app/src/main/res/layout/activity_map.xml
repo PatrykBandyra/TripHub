@@ -128,6 +128,43 @@
                             android:gravity="center" />
                     </RelativeLayout>
                 </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3"
+                        app:startIconDrawable="@drawable/ic_marker_dark">
+
+                        <androidx.appcompat.widget.AppCompatEditText
+                            android:id="@+id/etFindPlace"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/white"
+                            android:focusable="false"
+                            android:focusableInTouchMode="false"
+                            android:hint="@string/find_place"
+                            android:inputType="textEmailAddress"
+                            android:textColor="@color/secondary_text_color"
+                            android:textSize="@dimen/et_text_size" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <Button
+                        android:id="@+id/btnGoToPlace"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center|bottom"
+                        android:layout_marginStart="5dp"
+                        android:layout_weight="1"
+                        android:text="@string/go" />
+                </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
     </LinearLayout>

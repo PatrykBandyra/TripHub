@@ -69,6 +69,9 @@ dependencies {
     // Google Maps
     implementation 'com.google.android.libraries.places:places:2.6.0'
 
+    // Google Places
+    implementation 'com.google.android.libraries.places:places:2.6.0'
+
     // Play services location
     implementation 'com.google.android.gms:play-services-location:19.0.1'
 }
