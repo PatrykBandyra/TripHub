@@ -8,8 +8,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.triphub.R
+import com.example.triphub.activities.MainActivity
 import com.example.triphub.databinding.ItemMyTripBinding
+import com.example.triphub.firebase.MyTripFireStore
 import com.example.triphub.models.MyTrip
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 
 class MyTripsAdapter(private val context: Context, private var items: ArrayList<MyTrip>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -65,5 +69,29 @@ class MyTripsAdapter(private val context: Context, private var items: ArrayList<
 
     fun notifyEditItem(activity: Activity, position: Int) {
         Log.i("TripAdapter", "EDIT position: $position")
+    }
+
+    fun removeAt(activity: MainActivity, adapterPosition: Int) {
+        val trip: MyTrip = items[adapterPosition]
+        if (trip.image.isNotEmpty()) {
+            val sRef: StorageReference =
+                FirebaseStorage.getInstance().getReferenceFromUrl(trip.image)
+            sRef.delete()
+                .addOnSuccessListener {
+                    Log.i("Firebase Image", "Trip picture ${trip.image} deleted")
+                    MyTripFireStore().deleteTrip(activity,this, trip, adapterPosition)
+                }
+                .addOnFailureListener {
+                    Log.i("Firebase Image", "Could not delete trip picture: ${trip.image}")
+                    activity.onTripDeletionFailure()
+                }
+        } else {
+            MyTripFireStore().deleteTrip(activity,this, trip, adapterPosition)
+        }
+    }
+
+    fun onTripDeletionSuccess(position: Int) {
+        items.removeAt(position)
+        notifyItemRemoved(position)
     }
 }

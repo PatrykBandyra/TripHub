@@ -2,6 +2,7 @@ package com.example.triphub.activities
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -184,7 +185,19 @@ class MainActivity : BaseActivity<ActivityMainBinding>(),
 
                 val deleteSwipeHandler = object : SwipeToDeleteCallback(this) {
                     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                        // TODO: remove from FireStore, activityList, adapter
+                        val deleteDialog = AlertDialog.Builder(this@MainActivity)
+                        deleteDialog.setIcon(R.drawable.ic_delete_red_24dp)
+                        deleteDialog.setTitle(R.string.delete_trip)
+                        deleteDialog.setPositiveButton(getString(R.string.yes)) { dialog, which ->
+                            mTripsAdapter.removeAt(this@MainActivity, viewHolder.adapterPosition)
+                            dialog.dismiss()
+                            showProgressDialog()
+                        }
+                        deleteDialog.setNegativeButton(getString(R.string.no)) { dialog, _ ->
+                            dialog.dismiss()
+                            mTripsAdapter.notifyItemChanged(viewHolder.adapterPosition)
+                        }
+                        deleteDialog.show()
                     }
                 }
 
@@ -205,5 +218,15 @@ class MainActivity : BaseActivity<ActivityMainBinding>(),
 
     fun onMyTripsListLoadFailure() {
         showErrorSnackBar(R.string.load_user_trips)
+    }
+
+    fun onTripDeletionFailure() {
+        hideProgressDialog()
+        showErrorSnackBar(R.string.trip_deletion_error)
+    }
+
+    fun onTripDeletionSuccess(position: Int) {
+        hideProgressDialog()
+        myTrips.removeAt(position)
     }
 }

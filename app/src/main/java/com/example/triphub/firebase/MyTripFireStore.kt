@@ -2,12 +2,16 @@ package com.example.triphub.firebase
 
 import android.util.Log
 import com.example.triphub.activities.AddTripActivity
+import com.example.triphub.activities.BaseActivity
 import com.example.triphub.activities.MainActivity
+import com.example.triphub.adapters.MyTripsAdapter
 import com.example.triphub.models.MyTrip
 import com.example.triphub.utils.Constants
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 
 class MyTripFireStore : FireStoreBaseClass() {
 
@@ -52,6 +56,19 @@ class MyTripFireStore : FireStoreBaseClass() {
             .addOnFailureListener {
                 it.printStackTrace()
                 activity.onMyTripsListLoadFailure()
+            }
+    }
+
+    fun deleteTrip(activity: MainActivity, adapter: MyTripsAdapter, myTrip: MyTrip, position: Int) {
+        mFireStore.collection(Constants.Models.MyTrip.MY_TRIPS)
+            .document(myTrip.documentId)
+            .delete()
+            .addOnSuccessListener {
+                adapter.onTripDeletionSuccess(position)
+                activity.onTripDeletionSuccess(position)
+            }
+            .addOnFailureListener {
+                activity.onTripDeletionFailure()
             }
     }
 }
