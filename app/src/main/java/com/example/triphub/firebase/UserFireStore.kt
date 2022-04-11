@@ -3,6 +3,7 @@ package com.example.triphub.firebase
 import android.app.Activity
 import android.util.Log
 import android.widget.Toast
+import com.example.triphub.activities.AddTripActivity
 import com.example.triphub.activities.MainActivity
 import com.example.triphub.activities.MyProfileActivity
 import com.example.triphub.activities.SignUpActivity

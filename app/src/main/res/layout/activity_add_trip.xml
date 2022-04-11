@@ -53,7 +53,7 @@
                     android:id="@+id/ivTripImage"
                     android:layout_width="@dimen/my_profile_user_image_size"
                     android:layout_height="@dimen/my_profile_user_image_size"
-                    android:layout_marginTop="60dp"
+                    android:layout_marginTop="@dimen/create_trip_image_margin_top"
                     android:layout_marginBottom="@dimen/my_profile_user_image_margin_top_bottom"
                     android:contentDescription="@string/image_content_description"
                     android:src="@drawable/ic_image_placeholder" />
@@ -93,11 +93,11 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <Button
-                    android:id="@+id/btnUpdate"
+                    android:id="@+id/btnCreateTrip"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginTop="60dp"
+                    android:layout_marginTop="@dimen/create_trip_button_margin_top"
                     android:background="@drawable/button_rounded_gradient"
                     android:foreground="?attr/selectableItemBackground"
                     android:gravity="center"

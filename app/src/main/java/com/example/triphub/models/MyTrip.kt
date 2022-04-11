@@ -4,32 +4,46 @@ import android.os.Parcel
 import android.os.Parcelable
 
 data class MyTrip(
-    val id: String ="",
+    var documentId: String = "",
     val name: String = "",
     val description: String = "",
     val image: String = "",
-    val users: ArrayList<String> = ArrayList(),
+    val creatorID: String = "",
+    val creatorName: String = "",
+    val userIDs: ArrayList<String> = ArrayList(),
     val places: ArrayList<MyPlace> = ArrayList(),
-    val polylines: ArrayList<MyPolyline> = ArrayList()
+    val polylines: ArrayList<MyPolyline> = ArrayList(),
+    val polygons: ArrayList<MyPolygon> = ArrayList(),
+    val circles: ArrayList<MyCircle> = ArrayList(),
+    val createdAt: Long = 0L
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.readString()!!,
+        parcel.readString()!!,
+        parcel.readString()!!,
         parcel.createStringArrayList()!!,
         parcel.createTypedArrayList(MyPlace.CREATOR)!!,
-        parcel.createTypedArrayList(MyPolyline.CREATOR)!!
+        parcel.createTypedArrayList(MyPolyline.CREATOR)!!,
+        parcel.createTypedArrayList(MyPolygon.CREATOR)!!,
+        parcel.createTypedArrayList(MyCircle.CREATOR)!!,
+        parcel.readLong()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(id)
         parcel.writeString(name)
         parcel.writeString(description)
         parcel.writeString(image)
-        parcel.writeStringList(users)
+        parcel.writeString(creatorID)
+        parcel.writeString(creatorName)
+        parcel.writeStringList(userIDs)
         parcel.writeTypedList(places)
         parcel.writeTypedList(polylines)
+        parcel.writeTypedList(polygons)
+        parcel.writeTypedList(circles)
+        parcel.writeLong(createdAt)
     }
 
     override fun describeContents(): Int {

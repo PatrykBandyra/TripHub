@@ -10,6 +10,21 @@ object Constants {
             const val EMAIL: String = "email"
             const val IMAGE: String = "image"
         }
+
+        object MyTrip {
+            const val MY_TRIPS: String = "MyTrips"
+            const val NAME: String = "name"
+            const val DESCRIPTION: String = "description"
+            const val IMAGE: String = "image"
+            const val CREATOR_ID: String = "creatorId"
+            const val USER_IDS: String = "userIDs"
+            const val PLACES: String = "places"
+            const val POLYLINES: String = "polylines"
+            const val POLYGONS: String = "polygons"
+            const val CIRCLES: String = "circles"
+            const val CREATED_AT: String = "createdAt"
+            const val LOAD_LIMIT: Long = 8
+        }
     }
 
     object Intent {

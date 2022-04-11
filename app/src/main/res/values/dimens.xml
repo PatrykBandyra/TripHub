@@ -67,5 +67,16 @@
     <dimen name="toolbar_icon_margin">10dp</dimen>
     <dimen name="app_bar_main_title_size">30sp</dimen>
     <dimen name="fab_border_width">0dp</dimen>
+    <dimen name="create_trip_image_margin_top">60dp</dimen>
+    <dimen name="create_trip_button_margin_top">60dp</dimen>
+    <dimen name="item_MyTrip_margin_bottom">10dp</dimen>
+    <dimen name="item_MyTrip_content_padding">10dp</dimen>
+    <dimen name="item_MyTrip_image_size">60dp</dimen>
+    <dimen name="item_MyTrip_image_circular_border_width">0.5dp</dimen>
+    <dimen name="item_MyTrip_name_layout_margin_start">10dp</dimen>
+    <dimen name="item_MyTrip_name_text_size">18sp</dimen>
+    <dimen name="item_MyTrip_created_by_text_size">14sp</dimen>
+    <dimen name="item_MyTrip_divider_height">0.3dp</dimen>
+    <dimen name="item_MyTrip_divider_margin_top">5dp</dimen>
     <!--  !MyProfile Screen  -->
 </resources>

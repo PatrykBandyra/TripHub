@@ -13,8 +13,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import com.bumptech.glide.Glide
 import com.example.triphub.R
 import com.example.triphub.databinding.ActivityAddTripBinding
+import com.example.triphub.firebase.MyTripFireStore
 import com.example.triphub.firebase.UserFireStore
+import com.example.triphub.models.MyTrip
 import com.example.triphub.models.User
+import com.example.triphub.utils.Constants
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -30,18 +33,26 @@ class AddTripActivity : BaseActivity<ActivityAddTripBinding>() {
     private var mSelectedImageFileUri: Uri? = null
     private var mTripImageURL: String = ""
 
+    private lateinit var userData: User
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        if (intent.hasExtra(Constants.Intent.USER_DATA)) {
+            userData = intent.getParcelableExtra(Constants.Intent.USER_DATA)!!
+        }
+
         setUpActionBarForReturnAction(
             binding.toolbarAddTripActivity,
             icon = R.drawable.back_arrow_white
         )
 
         binding.ivTripImage.setOnClickListener {
+            hideKeyboard()
             showImageChooserDialog()
         }
 
-        binding.btnUpdate.setOnClickListener {
+        binding.btnCreateTrip.setOnClickListener {
             if (mSelectedImageFileUri != null) {
                 uploadTripImage()
             } else {
@@ -79,11 +90,23 @@ class AddTripActivity : BaseActivity<ActivityAddTripBinding>() {
 
     private fun createTrip() {
         val name: String = binding.etName.text.toString().trim { it <= ' ' }
-        val email: String = binding.etDescription.text.toString().trim { it <= ' ' }
+        val description: String = binding.etDescription.text.toString().trim { it <= ' ' }
 
         if (validateForm(name)) {
+            hideKeyboard()
             showProgressDialog()
-
+            val usersIDs: ArrayList<String> = ArrayList()
+            usersIDs.add(userData.id)
+            val newTrip = MyTrip(
+                name = name,
+                description = description,
+                image = mTripImageURL,
+                creatorID = userData.id,
+                creatorName = userData.name,
+                userIDs = usersIDs,
+                createdAt = System.currentTimeMillis()
+            )
+            MyTripFireStore().createMyTrip(this, newTrip)
         }
     }
 
@@ -209,6 +232,17 @@ class AddTripActivity : BaseActivity<ActivityAddTripBinding>() {
             }
         }
         imageDialog.show()
+    }
+
+    fun onCreateMyTripSuccess() {
+        hideProgressDialog()
+        setResult(Activity.RESULT_OK)
+        finish()
+    }
+
+    fun onCreateMyTripFailure() {
+        hideProgressDialog()
+        showErrorSnackBar(R.string.create_new_trip_error)
     }
 
 
