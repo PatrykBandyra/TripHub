@@ -15,6 +15,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.GravityCompat
 import androidx.core.view.children
 import androidx.core.view.get
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -29,6 +30,8 @@ import com.example.triphub.firebase.UserFireStore
 import com.example.triphub.models.MyTrip
 import com.example.triphub.models.User
 import com.example.triphub.utils.Constants
+import com.example.triphub.utils.SwipeToDeleteCallback
+import com.example.triphub.utils.SwipeToEditCallback
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.DocumentSnapshot
@@ -59,6 +62,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(),
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 myTrips.clear()
+                mIsFirstTripsLoad = true
                 latestVisibleDocument = null
                 MyTripFireStore().loadMyTripsList(this, latestVisibleDocument)
                 Log.i("Main", "Everything fine")
@@ -159,26 +163,40 @@ class MainActivity : BaseActivity<ActivityMainBinding>(),
                 binding.appBarMain.mainContent.rvTrips.layoutManager = LinearLayoutManager(this)
                 mTripsAdapter = MyTripsAdapter(this@MainActivity, myTripsList)
                 binding.appBarMain.mainContent.rvTrips.adapter = mTripsAdapter
+
                 binding.appBarMain.mainContent.rvTrips.setOnScrollChangeListener { view, scrollX, scrollY, oldScrollX, oldScrollY ->
-//                Log.i("Scroll", "${(view as RecyclerView).computeVerticalScrollRange()}")
-//                if (scrollY == (view as RecyclerView).getChildAt(0).height - view.measuredHeight) {
-//                    Log.i("Scroll", "DATA LOAD")
-//                }
                     val layoutManager = ((view as RecyclerView).layoutManager as LinearLayoutManager)
                     if (layoutManager.findLastCompletelyVisibleItemPosition() == myTrips.size - 1) {
                         Log.i("Main", "Loading more trips")
                         MyTripFireStore().loadMyTripsList(this@MainActivity, latestVisibleDocument)
                     }
                 }
+
+                val editSwipeHandler = object : SwipeToEditCallback(this) {
+                    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                        mTripsAdapter.notifyEditItem(this@MainActivity, viewHolder.adapterPosition)
+
+                        // TODO: something
+                    }
+                }
+                val editItemTouchHelper = ItemTouchHelper(editSwipeHandler)
+                editItemTouchHelper.attachToRecyclerView(binding.appBarMain.mainContent.rvTrips)
+
+                val deleteSwipeHandler = object : SwipeToDeleteCallback(this) {
+                    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                        // TODO: remove from FireStore, activityList, adapter
+                    }
+                }
+
+                val deleteItemTouchHelper = ItemTouchHelper(deleteSwipeHandler)
+                deleteItemTouchHelper.attachToRecyclerView(binding.appBarMain.mainContent.rvTrips)
+
             } else {
                 Log.i("notify", "notify")
                 myTrips.addAll(myTripsList)
                 mTripsAdapter.addItems(myTripsList)
                 mTripsAdapter.notifyDataSetChanged()
             }
-
-
-            // TODO: onClick listener
         } else {
             binding.appBarMain.mainContent.tvNoTrips.visibility = View.VISIBLE
             binding.appBarMain.mainContent.rvTrips.visibility = View.GONE

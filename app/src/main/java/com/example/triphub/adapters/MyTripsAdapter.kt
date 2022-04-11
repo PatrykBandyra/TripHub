@@ -1,6 +1,8 @@
 package com.example.triphub.adapters
 
+import android.app.Activity
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -59,5 +61,9 @@ class MyTripsAdapter(private val context: Context, private var items: ArrayList<
 
     fun addItems(myTrips: ArrayList<MyTrip>) {
         items.addAll(myTrips)
+    }
+
+    fun notifyEditItem(activity: Activity, position: Int) {
+        Log.i("TripAdapter", "EDIT position: $position")
     }
 }
