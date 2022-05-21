@@ -45,7 +45,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(),
     private lateinit var navHeaderChatBinding: NavViewHeaderChatBinding
 
     private lateinit var appBarMainBinding: AppBarMainBinding
-    private var userData: User? = null
+    var userData: User? = null
     private val myTrips: ArrayList<MyTrip> = ArrayList()
     private var latestVisibleDocument: DocumentSnapshot? = null
 
@@ -67,6 +67,16 @@ class MainActivity : BaseActivity<ActivityMainBinding>(),
                 latestVisibleDocument = null
                 MyTripFireStore().loadMyTripsList(this, latestVisibleDocument)
                 Log.i("Main", "Everything fine")
+            }
+        }
+
+    var mTripEditPosition: Int? = null
+    val editTripLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val updatedTrip: MyTrip = result.data!!.extras!!.getParcelable(Constants.Intent.TRIP_UPDATE)!!
+                mTripsAdapter.items[mTripEditPosition!!] = updatedTrip
+                mTripsAdapter.notifyItemChanged(mTripEditPosition!!)
             }
         }
 
@@ -166,7 +176,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>(),
                 binding.appBarMain.mainContent.rvTrips.adapter = mTripsAdapter
 
                 binding.appBarMain.mainContent.rvTrips.setOnScrollChangeListener { view, scrollX, scrollY, oldScrollX, oldScrollY ->
-                    val layoutManager = ((view as RecyclerView).layoutManager as LinearLayoutManager)
+                    val layoutManager =
+                        ((view as RecyclerView).layoutManager as LinearLayoutManager)
                     if (layoutManager.findLastCompletelyVisibleItemPosition() == myTrips.size - 1) {
                         Log.i("Main", "Loading more trips")
                         MyTripFireStore().loadMyTripsList(this@MainActivity, latestVisibleDocument)
@@ -175,9 +186,10 @@ class MainActivity : BaseActivity<ActivityMainBinding>(),
 
                 val editSwipeHandler = object : SwipeToEditCallback(this) {
                     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                        mTripsAdapter.notifyEditItem(this@MainActivity, viewHolder.adapterPosition)
-
-                        // TODO: something
+                        val position: Int = viewHolder.adapterPosition
+                        mTripEditPosition = position
+                        mTripsAdapter.notifyItemChanged(position)  // To always remove green banner
+                        mTripsAdapter.notifyEditItem(this@MainActivity, position)
                     }
                 }
                 val editItemTouchHelper = ItemTouchHelper(editSwipeHandler)

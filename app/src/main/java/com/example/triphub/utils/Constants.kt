@@ -30,6 +30,9 @@ object Constants {
     object Intent {
         const val USER_DATA: String = "userData"
         const val ERROR: String = "error"
+
+        const val TRIP: String = "trip"
+        const val TRIP_UPDATE: String = "trip_update"
     }
 
     object Files {

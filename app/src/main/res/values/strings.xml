@@ -96,6 +96,8 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="trip_deletion_error">Failed to delete a trip</string>
+    <string name="edit_trip">Edit Trip</string>
+    <string name="update_trip">Update Trip</string>
 
     <!--  !Add Trip Screen  -->
 

@@ -34,12 +34,25 @@ class AddTripActivity : BaseActivity<ActivityAddTripBinding>() {
     private var mTripImageURL: String = ""
 
     private lateinit var userData: User
+    private var trip: MyTrip? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         if (intent.hasExtra(Constants.Intent.USER_DATA)) {
             userData = intent.getParcelableExtra(Constants.Intent.USER_DATA)!!
+        }
+
+        if (intent.hasExtra(Constants.Intent.TRIP)) {
+            trip = intent.getParcelableExtra(Constants.Intent.TRIP) as MyTrip?
+            binding.etName.setText(trip!!.name)
+            binding.etDescription.setText(trip!!.description)
+            Glide
+                .with(this)
+                .load(trip!!.image)
+                .centerCrop()
+                .placeholder(R.drawable.ic_image_placeholder)
+                .into(binding.ivTripImage)
         }
 
         setUpActionBarForReturnAction(
@@ -60,6 +73,11 @@ class AddTripActivity : BaseActivity<ActivityAddTripBinding>() {
             }
         }
 
+        if (trip != null) {
+            binding.tvTitle.text = getString(R.string.edit_trip)
+            binding.btnCreateTrip.text = getString(R.string.update_trip)
+        }
+
     }
 
     private fun uploadTripImage() {
@@ -77,6 +95,9 @@ class AddTripActivity : BaseActivity<ActivityAddTripBinding>() {
                     taskSnapshot.metadata!!.reference!!.downloadUrl.addOnSuccessListener { uri ->
                         Log.i("Downloadable Image URL", uri.toString())
                         mTripImageURL = uri.toString()
+                        if (trip != null) {
+                            deleteOldTripImage()
+                        }
                         createTrip()
                     }
                 }
@@ -84,6 +105,23 @@ class AddTripActivity : BaseActivity<ActivityAddTripBinding>() {
                     Toast.makeText(this@AddTripActivity, exception.message, Toast.LENGTH_LONG)
                         .show()
                     hideProgressDialog()
+                }
+        }
+    }
+
+    private fun deleteOldTripImage() {
+        if (trip!!.image.isNotEmpty()) {
+            val sRef: StorageReference =
+                FirebaseStorage.getInstance().getReferenceFromUrl(trip!!.image)
+            sRef.delete()
+                .addOnSuccessListener {
+                    Log.i("Firebase Image", "Old trip picture ${trip!!.image} deleted")
+                }
+                .addOnFailureListener {
+                    Log.i(
+                        "Firebase Image",
+                        "Could not delete old user profile picture ${trip!!.image}"
+                    )
                 }
         }
     }
@@ -106,7 +144,12 @@ class AddTripActivity : BaseActivity<ActivityAddTripBinding>() {
                 userIDs = usersIDs,
                 createdAt = System.currentTimeMillis()
             )
-            MyTripFireStore().createMyTrip(this, newTrip)
+            if (trip == null) {
+                MyTripFireStore().createMyTrip(this, newTrip)
+            } else {
+                newTrip.documentId = trip!!.documentId
+                MyTripFireStore().updateMyTrip(this, newTrip)
+            }
         }
     }
 
@@ -243,6 +286,16 @@ class AddTripActivity : BaseActivity<ActivityAddTripBinding>() {
     fun onCreateMyTripFailure() {
         hideProgressDialog()
         showErrorSnackBar(R.string.create_new_trip_error)
+    }
+
+    fun onUpdateMyTripSuccess(trip: MyTrip) {
+        hideProgressDialog()
+        setResult(Activity.RESULT_OK, Intent().putExtra(Constants.Intent.TRIP_UPDATE, trip))
+        finish()
+    }
+
+    fun onUpdateMyTripFailure() {
+        onCreateMyTripFailure()
     }
 
 

@@ -33,6 +33,7 @@ data class MyTrip(
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(documentId)
         parcel.writeString(name)
         parcel.writeString(description)
         parcel.writeString(image)

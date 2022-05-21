@@ -2,20 +2,23 @@ package com.example.triphub.adapters
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.triphub.R
+import com.example.triphub.activities.AddTripActivity
 import com.example.triphub.activities.MainActivity
 import com.example.triphub.databinding.ItemMyTripBinding
 import com.example.triphub.firebase.MyTripFireStore
 import com.example.triphub.models.MyTrip
+import com.example.triphub.utils.Constants
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 
-class MyTripsAdapter(private val context: Context, private var items: ArrayList<MyTrip>) :
+class MyTripsAdapter(private val context: Context, var items: ArrayList<MyTrip>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var onClickListener: OnClickListener? = null
@@ -67,8 +70,11 @@ class MyTripsAdapter(private val context: Context, private var items: ArrayList<
         items.addAll(myTrips)
     }
 
-    fun notifyEditItem(activity: Activity, position: Int) {
-        Log.i("TripAdapter", "EDIT position: $position")
+    fun notifyEditItem(activity: MainActivity, position: Int) {
+        val intent = Intent(context, AddTripActivity::class.java)
+        intent.putExtra(Constants.Intent.TRIP, items[position])
+        intent.putExtra(Constants.Intent.USER_DATA, activity.userData)
+        activity.editTripLauncher.launch(intent)
     }
 
     fun removeAt(activity: MainActivity, adapterPosition: Int) {

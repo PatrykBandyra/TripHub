@@ -7,6 +7,7 @@ import com.example.triphub.activities.MainActivity
 import com.example.triphub.adapters.MyTripsAdapter
 import com.example.triphub.models.MyTrip
 import com.example.triphub.utils.Constants
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
@@ -16,9 +17,10 @@ import com.google.firebase.storage.StorageReference
 class MyTripFireStore : FireStoreBaseClass() {
 
     fun createMyTrip(activity: AddTripActivity, myTrip: MyTrip) {
-        mFireStore.collection(Constants.Models.MyTrip.MY_TRIPS)
-            .document()
-            .set(myTrip, SetOptions.merge())
+        val docRef: DocumentReference =
+            mFireStore.collection(Constants.Models.MyTrip.MY_TRIPS).document()
+        myTrip.documentId = docRef.id
+        docRef.set(myTrip, SetOptions.merge())
             .addOnSuccessListener {
                 activity.onCreateMyTripSuccess()
             }
@@ -28,13 +30,29 @@ class MyTripFireStore : FireStoreBaseClass() {
             }
     }
 
+    fun updateMyTrip(activity: AddTripActivity, myTrip: MyTrip) {
+        val tripHashmap = HashMap<String, Any>()
+        tripHashmap[Constants.Models.MyTrip.NAME] = myTrip.name
+        tripHashmap[Constants.Models.MyTrip.DESCRIPTION] = myTrip.description
+        tripHashmap[Constants.Models.MyTrip.IMAGE] = myTrip.image
+        mFireStore.collection(Constants.Models.MyTrip.MY_TRIPS)
+            .document(myTrip.documentId)
+            .update(tripHashmap)
+            .addOnSuccessListener {
+                activity.onUpdateMyTripSuccess(myTrip)
+            }
+            .addOnFailureListener { e ->
+                Log.e(javaClass.simpleName, e.message.toString())
+                activity.onUpdateMyTripFailure()
+            }
+    }
+
     fun loadMyTripsList(activity: MainActivity, latestVisibleDocument: DocumentSnapshot?) {
         var query = mFireStore.collection(Constants.Models.MyTrip.MY_TRIPS)
             .whereArrayContains(Constants.Models.MyTrip.USER_IDS, getCurrentUserId())
             .orderBy(Constants.Models.MyTrip.CREATED_AT, Query.Direction.DESCENDING)
         if (latestVisibleDocument != null) {
             query = query.startAfter(latestVisibleDocument.toObject(MyTrip::class.java)!!.createdAt)
-            Log.i("HERE", "HERE")
         }
         query.limit(Constants.Models.MyTrip.LOAD_LIMIT)
             .get()
