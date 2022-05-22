@@ -21,7 +21,7 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 
-class MapActivity : BaseActivity<ActivityMapBinding>(), OnMapReadyCallback,
+class MyTripMapActivity : BaseActivity<ActivityMapBinding>(), OnMapReadyCallback,
     GoogleMap.OnMarkerClickListener, GoogleMap.OnMarkerDragListener, GoogleMap.OnMapClickListener,
     GoogleMap.OnInfoWindowClickListener, GoogleMap.OnPolylineClickListener {
 
@@ -40,7 +40,7 @@ class MapActivity : BaseActivity<ActivityMapBinding>(), OnMapReadyCallback,
         setOnButtonClickedListeners()
 
         if (!Places.isInitialized()) {
-            Places.initialize(this@MapActivity, BuildConfig.GOOGLE_API_KEY)
+            Places.initialize(this@MyTripMapActivity, BuildConfig.GOOGLE_API_KEY)
         }
 
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
@@ -75,7 +75,7 @@ class MapActivity : BaseActivity<ActivityMapBinding>(), OnMapReadyCallback,
                 )
                 val intent =
                     Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields)
-                        .build(this@MapActivity)
+                        .build(this@MyTripMapActivity)
                 placesResultLauncher.launch(intent)
             } catch (e: Exception) {
                 e.printStackTrace()

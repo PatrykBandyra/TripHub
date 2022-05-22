@@ -112,7 +112,7 @@ abstract class BaseActivity<B : ViewBinding> : AppCompatActivity() {
         }
     }
 
-    protected fun showErrorSnackBar(@StringRes message: Int) {
+    fun showErrorSnackBar(@StringRes message: Int) {
         val snackBar =
             Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG)
         val snackBarView = snackBar.view

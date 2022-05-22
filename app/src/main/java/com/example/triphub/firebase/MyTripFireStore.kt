@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.triphub.activities.AddTripActivity
 import com.example.triphub.activities.BaseActivity
 import com.example.triphub.activities.MainActivity
+import com.example.triphub.activities.MyTripPeopleActivity
 import com.example.triphub.adapters.MyTripsAdapter
 import com.example.triphub.models.MyTrip
 import com.example.triphub.utils.Constants
@@ -87,6 +88,20 @@ class MyTripFireStore : FireStoreBaseClass() {
             }
             .addOnFailureListener {
                 activity.onTripDeletionFailure()
+            }
+    }
+
+    fun addPersonToTrip(activity: MyTripPeopleActivity, myTrip: MyTrip) {
+        val usersIDsHashMap = HashMap<String, Any>()
+        usersIDsHashMap[Constants.Models.MyTrip.USER_IDS] = myTrip.userIDs
+        mFireStore.collection(Constants.Models.MyTrip.MY_TRIPS)
+            .document(myTrip.documentId)
+            .update(usersIDsHashMap)
+            .addOnSuccessListener {
+                activity.onAddPersonSuccess()
+            }
+            .addOnFailureListener {
+                activity.onAddPersonFailure()
             }
     }
 }

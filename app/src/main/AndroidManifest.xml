@@ -18,7 +18,13 @@
         android:theme="@style/Theme.TripHub"
         tools:ignore="LockedOrientationActivity">
         <activity
-            android:name=".activities.MyTripActivity"
+            android:name=".MyTripPeopleActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MyTripChatActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.MyTripBoardActivity"
             android:exported="false" />
         <activity
             android:name=".activities.AddTripActivity"
@@ -29,7 +35,7 @@
             android:value="${GOOGLE_API_KEY}" />
 
         <activity
-            android:name=".activities.MapActivity"
+            android:name=".activities.MyTripMapActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    tools:context=".activities.MyTripPeopleActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimaryVariant"
+            app:contentInsetEnd="0dp"
+            app:contentInsetStart="0dp"
+            app:popupTheme="@style/AppTheme.PopUpOverlay">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/ivPeople"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/trip_icons_border"
+                    android:contentDescription="@string/people"
+                    android:gravity="center"
+                    android:paddingVertical="10dp"
+                    android:src="@drawable/ic_people" />
+
+                <ImageView
+                    android:id="@+id/ivBoard"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:contentDescription="@string/board"
+                    android:gravity="center"
+                    android:paddingVertical="10dp"
+                    android:src="@drawable/ic_board" />
+
+                <ImageView
+                    android:id="@+id/ivMap"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:contentDescription="@string/map"
+                    android:paddingVertical="10dp"
+                    android:src="@drawable/ic_map" />
+
+                <ImageView
+                    android:id="@+id/ivChat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:contentDescription="@string/chat"
+                    android:gravity="center"
+                    android:paddingVertical="10dp"
+                    android:src="@drawable/ic_chat" />
+            </LinearLayout>
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/appBar">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cvPeople"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/card_view_people_margin"
+            android:layout_weight="30"
+            android:elevation="@dimen/card_view_elevation"
+            app:cardCornerRadius="@dimen/card_view_corner_radius">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvPeople"
+                android:minHeight="@dimen/recycler_view_people_min_height"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </androidx.cardview.widget.CardView>
+
+        <Button
+            android:id="@+id/btnAddPerson"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/add_person_btn_margin"
+            android:text="@string/add_person"
+            android:layout_weight="1"/>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,10 +3,8 @@ package com.example.triphub.firebase
 import android.app.Activity
 import android.util.Log
 import android.widget.Toast
-import com.example.triphub.activities.AddTripActivity
-import com.example.triphub.activities.MainActivity
-import com.example.triphub.activities.MyProfileActivity
-import com.example.triphub.activities.SignUpActivity
+import com.example.triphub.R
+import com.example.triphub.activities.*
 import com.example.triphub.models.User
 import com.example.triphub.utils.Constants
 import com.google.firebase.firestore.SetOptions
@@ -72,6 +70,24 @@ class UserFireStore : FireStoreBaseClass() {
                         activity.onUserUpdateFailure()
                     }
                 }
+            }
+    }
+
+    fun getPersonDetails(activity: MyTripPeopleActivity, email: String) {
+        mFireStore.collection(Constants.Models.User.USERS)
+            .whereEqualTo(Constants.Models.User.EMAIL, email)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document.documents.size > 0) {
+                    val user = document.documents[0].toObject(User::class.java)!!
+                    activity.personDetails(user)
+                } else {
+                    activity.onNoSuchPerson()
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e(activity.javaClass.simpleName, "Error while getting user details", e)
+                activity.onGetPersonDetailsFail()
             }
     }
 }

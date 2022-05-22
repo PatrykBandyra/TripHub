@@ -6,16 +6,10 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.GravityCompat
-import androidx.core.view.children
-import androidx.core.view.get
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -174,6 +168,13 @@ class MainActivity : BaseActivity<ActivityMainBinding>(),
                 binding.appBarMain.mainContent.rvTrips.layoutManager = LinearLayoutManager(this)
                 mTripsAdapter = MyTripsAdapter(this@MainActivity, myTripsList)
                 binding.appBarMain.mainContent.rvTrips.adapter = mTripsAdapter
+                mTripsAdapter.setOnClickListener(object : MyTripsAdapter.OnClickListener{
+                    override fun onClick(position: Int, myTrip: MyTrip) {
+                        val intent = Intent(this@MainActivity, MyTripPeopleActivity::class.java)
+                        intent.putExtra(Constants.Intent.TRIP, myTrip)
+                        startActivity(intent)
+                    }
+                })
 
                 binding.appBarMain.mainContent.rvTrips.setOnScrollChangeListener { view, scrollX, scrollY, oldScrollX, oldScrollY ->
                     val layoutManager =
