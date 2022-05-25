@@ -15,14 +15,17 @@ class MyTripChatActivity : BaseActivity<ActivityMyTripChatBinding>() {
     private fun setUpTaskBarNavigation() {
         binding.ivPeople.setOnClickListener {
             startActivity(Intent(this, MyTripPeopleActivity::class.java))
+            overridePendingTransition(0, 0)
             finish()
         }
         binding.ivMap.setOnClickListener {
             startActivity(Intent(this, MyTripMapActivity::class.java))
+            overridePendingTransition(0, 0)
             finish()
         }
         binding.ivBoard.setOnClickListener {
             startActivity(Intent(this, MyTripBoardActivity::class.java))
+            overridePendingTransition(0, 0)
             finish()
         }
     }

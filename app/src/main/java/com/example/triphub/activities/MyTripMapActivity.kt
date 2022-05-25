@@ -52,14 +52,17 @@ class MyTripMapActivity : BaseActivity<ActivityMyTripMapBinding>(), OnMapReadyCa
     private fun setUpTaskBarNavigation() {
         binding.ivPeople.setOnClickListener {
             startActivity(Intent(this, MyTripPeopleActivity::class.java))
+            overridePendingTransition(0, 0)
             finish()
         }
         binding.ivBoard.setOnClickListener {
             startActivity(Intent(this, MyTripBoardActivity::class.java))
+            overridePendingTransition(0, 0)
             finish()
         }
         binding.ivChat.setOnClickListener {
             startActivity(Intent(this, MyTripChatActivity::class.java))
+            overridePendingTransition(0, 0)
             finish()
         }
     }
