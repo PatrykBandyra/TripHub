@@ -1,6 +1,7 @@
 package com.example.triphub.activities
 
 import android.app.Activity
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
@@ -38,6 +39,7 @@ class MyTripMapActivity : BaseActivity<ActivityMyTripMapBinding>(), OnMapReadyCa
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         setOnButtonClickedListeners()
+        setUpTaskBarNavigation()
 
         if (!Places.isInitialized()) {
             Places.initialize(this@MyTripMapActivity, BuildConfig.GOOGLE_API_KEY)
@@ -45,6 +47,21 @@ class MyTripMapActivity : BaseActivity<ActivityMyTripMapBinding>(), OnMapReadyCa
 
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+    }
+
+    private fun setUpTaskBarNavigation() {
+        binding.ivPeople.setOnClickListener {
+            startActivity(Intent(this, MyTripPeopleActivity::class.java))
+            finish()
+        }
+        binding.ivBoard.setOnClickListener {
+            startActivity(Intent(this, MyTripBoardActivity::class.java))
+            finish()
+        }
+        binding.ivChat.setOnClickListener {
+            startActivity(Intent(this, MyTripChatActivity::class.java))
+            finish()
+        }
     }
 
     override fun onResume() {
