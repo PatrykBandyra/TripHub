@@ -68,7 +68,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>(),
     val editTripLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                val updatedTrip: MyTrip = result.data!!.extras!!.getParcelable(Constants.Intent.TRIP_UPDATE)!!
+                val updatedTrip: MyTrip =
+                    result.data!!.extras!!.getParcelable(Constants.Intent.TRIP_UPDATE)!!
                 mTripsAdapter.items[mTripEditPosition!!] = updatedTrip
                 mTripsAdapter.notifyItemChanged(mTripEditPosition!!)
             }
@@ -168,7 +169,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(),
                 binding.appBarMain.mainContent.rvTrips.layoutManager = LinearLayoutManager(this)
                 mTripsAdapter = MyTripsAdapter(this@MainActivity, myTripsList)
                 binding.appBarMain.mainContent.rvTrips.adapter = mTripsAdapter
-                mTripsAdapter.setOnClickListener(object : MyTripsAdapter.OnClickListener{
+                mTripsAdapter.setOnClickListener(object : MyTripsAdapter.OnClickListener {
                     override fun onClick(position: Int, myTrip: MyTrip) {
                         val intent = Intent(this@MainActivity, MyTripPeopleActivity::class.java)
                         intent.putExtra(Constants.Intent.TRIP, myTrip)

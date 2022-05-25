@@ -9,7 +9,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import com.example.triphub.BuildConfig
 import com.example.triphub.R
-import com.example.triphub.databinding.ActivityMapBinding
+import com.example.triphub.databinding.ActivityMyTripMapBinding
 import com.example.triphub.utils.Constants
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -21,7 +21,7 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 
-class MyTripMapActivity : BaseActivity<ActivityMapBinding>(), OnMapReadyCallback,
+class MyTripMapActivity : BaseActivity<ActivityMyTripMapBinding>(), OnMapReadyCallback,
     GoogleMap.OnMarkerClickListener, GoogleMap.OnMarkerDragListener, GoogleMap.OnMapClickListener,
     GoogleMap.OnInfoWindowClickListener, GoogleMap.OnPolylineClickListener {
 
@@ -130,7 +130,7 @@ class MyTripMapActivity : BaseActivity<ActivityMapBinding>(), OnMapReadyCallback
     }
 
 
-    override fun getViewBinding() = ActivityMapBinding.inflate(layoutInflater)
+    override fun getViewBinding() = ActivityMyTripMapBinding.inflate(layoutInflater)
 
     override fun onMapReady(googleMap: GoogleMap?) {
         mMap = googleMap!!

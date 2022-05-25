@@ -94,7 +94,7 @@ abstract class BaseActivity<B : ViewBinding> : AppCompatActivity() {
         }
     }
 
-    protected fun showProgressDialog(@StringRes message: Int = R.string.please_wait) {
+    fun showProgressDialog(@StringRes message: Int = R.string.please_wait) {
         if (!isProgressDialogShown) {
             isProgressDialogShown = true
             mProgressDialog = Dialog(this)
@@ -105,7 +105,7 @@ abstract class BaseActivity<B : ViewBinding> : AppCompatActivity() {
         }
     }
 
-    protected fun hideProgressDialog() {
+    fun hideProgressDialog() {
         if (isProgressDialogShown) {
             mProgressDialog.dismiss()
             isProgressDialogShown = false

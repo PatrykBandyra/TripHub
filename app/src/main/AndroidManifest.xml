@@ -18,10 +18,10 @@
         android:theme="@style/Theme.TripHub"
         tools:ignore="LockedOrientationActivity">
         <activity
-            android:name=".MyTripPeopleActivity"
+            android:name=".activities.MyTripPeopleActivity"
             android:exported="false" />
         <activity
-            android:name=".MyTripChatActivity"
+            android:name=".activities.MyTripChatActivity"
             android:exported="false" />
         <activity
             android:name=".activities.MyTripBoardActivity"

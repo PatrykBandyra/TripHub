@@ -119,6 +119,12 @@
     <string name="no_such_person">No such person found</string>
     <string name="error_person_data">Error while getting person data</string>
     <string name="error_adding_person_to_trip">Could not add a person to the trip</string>
+    <string name="could_not_load_people_trip">Could not load people assigned to this trip</string>
+    <string name="trip">Trip</string>
+    <string name="remove_person_from_trip">Are you sure you want to remove this person from the trip?</string>
+    <string name="could_not_remove_person_from_trip">Could not remove this person</string>
+    <string name="cannot_remove_yourself">You can\'t remove yourself</string>
+    <string name="could_not_refresh_trip">Could not refresh trip data</string>
     <!--  !Trip Screen  -->
 
 </resources>
