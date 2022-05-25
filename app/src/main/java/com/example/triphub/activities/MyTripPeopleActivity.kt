@@ -2,6 +2,7 @@ package com.example.triphub.activities
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -36,6 +37,8 @@ class MyTripPeopleActivity : BaseActivity<ActivityMyTripPeopleBinding>() {
             throw Exception("${this::class.java.simpleName}: No MyTrip object provided")
         }
 
+        setUpTaskBarNavigation()
+
         isCreator = mTrip.creatorID == UserFireStore().getCurrentUserId()
         MyTripFireStore().getMyTrip(this, mTrip.documentId)
 
@@ -61,7 +64,21 @@ class MyTripPeopleActivity : BaseActivity<ActivityMyTripPeopleBinding>() {
             }
             dialog.show()
         }
+    }
 
+    private fun setUpTaskBarNavigation() {
+        binding.ivBoard.setOnClickListener {
+            startActivity(Intent(this, MyTripBoardActivity::class.java))
+            finish()
+        }
+        binding.ivMap.setOnClickListener {
+            startActivity(Intent(this, MyTripMapActivity::class.java))
+            finish()
+        }
+        binding.ivChat.setOnClickListener {
+            startActivity(Intent(this, MyTripChatActivity::class.java))
+            finish()
+        }
     }
 
     override fun getViewBinding() = ActivityMyTripPeopleBinding.inflate(layoutInflater)
