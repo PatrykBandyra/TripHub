@@ -7,21 +7,26 @@ data class User(
     val id: String = "",
     val name: String = "",
     val email: String = "",
-    val image: String = ""
+    val image: String = "",
+    val friendIds: ArrayList<String> = arrayListOf(),
+    val friendRequests: ArrayList<String> = arrayListOf()
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.readString()!!,
-        parcel.readString()!!
-    ) {
-    }
+        parcel.readString()!!,
+        parcel.createStringArrayList()!!,
+        parcel.createStringArrayList()!!
+    )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(id)
         parcel.writeString(name)
         parcel.writeString(email)
         parcel.writeString(image)
+        parcel.writeStringList(friendIds)
+        parcel.writeStringList(friendRequests)
     }
 
     override fun describeContents(): Int {

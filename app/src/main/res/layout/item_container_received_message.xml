@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="4dp">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/civSenderImage"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:background="@drawable/ic_user_placeholder_black"
+        android:scaleType="centerCrop"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/tvMessage"/>
+
+    <TextView
+        android:id="@+id/tvMessage"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/background_received_message"
+        android:padding="12dp"
+        android:textColor="@color/white"
+        android:textSize="13sp"
+        app:layout_constraintStart_toEndOf="@id/civSenderImage"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.8"
+        tools:text="Message" />
+
+    <TextView
+        android:id="@+id/tvDateTime"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:textColor="@color/primary_text_color"
+        android:textSize="11sp"
+        app:layout_constraintStart_toStartOf="@id/tvMessage"
+        app:layout_constraintTop_toBottomOf="@+id/tvMessage"
+        tools:text="DateTime" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

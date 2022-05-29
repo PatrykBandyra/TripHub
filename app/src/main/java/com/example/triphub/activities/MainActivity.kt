@@ -17,7 +17,6 @@ import com.bumptech.glide.Glide
 import com.example.triphub.R
 import com.example.triphub.adapters.MyTripsAdapter
 import com.example.triphub.databinding.ActivityMainBinding
-import com.example.triphub.databinding.AppBarMainBinding
 import com.example.triphub.databinding.NavViewHeaderChatBinding
 import com.example.triphub.databinding.NavViewHeaderMenuBinding
 import com.example.triphub.firebase.MyTripFireStore
@@ -38,7 +37,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(),
     private lateinit var navHeaderMenuBinding: NavViewHeaderMenuBinding
     private lateinit var navHeaderChatBinding: NavViewHeaderChatBinding
 
-    private lateinit var appBarMainBinding: AppBarMainBinding
     var userData: User? = null
     private val myTrips: ArrayList<MyTrip> = ArrayList()
     private var latestVisibleDocument: DocumentSnapshot? = null
@@ -119,6 +117,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>(),
         when (item.itemId) {
             R.id.navMyProfile -> {
                 myProfileLauncher.launch(Intent(this@MainActivity, MyProfileActivity::class.java))
+            }
+            R.id.navFriends -> {
+                startActivity(Intent(this@MainActivity, FriendsActivity::class.java))
             }
             R.id.navSignOut -> {
                 Firebase.auth.signOut()

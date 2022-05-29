@@ -355,7 +355,7 @@ class MyProfileActivity : BaseActivity<ActivityMyProfileBinding>() {
 
         if (anyChangesMade) {
             showProgressDialog()
-            UserFireStore().updateUser(this, userHashMap)
+            UserFireStore().updateUser(this, UserFireStore().getCurrentUserId(), userHashMap)
         }
     }
 

@@ -6,6 +6,10 @@
             android:icon="@drawable/ic_nav_user"
             android:title="@string/nav_my_profile" />
         <item
+            android:id="@+id/navFriends"
+            android:icon="@drawable/ic_nav_friends"
+            android:title="@string/friends" />
+        <item
             android:id="@+id/navSignOut"
             android:icon="@drawable/ic_nav_sign_out"
             android:title="@string/nav_sign_out" />

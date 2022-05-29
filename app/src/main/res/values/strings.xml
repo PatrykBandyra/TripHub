@@ -125,6 +125,12 @@
     <string name="could_not_remove_person_from_trip">Could not remove this person</string>
     <string name="cannot_remove_yourself">You can\'t remove yourself</string>
     <string name="could_not_refresh_trip">Could not refresh trip data</string>
+    <string name="send">send</string>
+    <string name="type_a_message">Type a message</string>
+    <string name="friends">Friends</string>
+    <string name="my_friends">My Friends</string>
+    <string name="friend_requests">Friend Requests</string>
+    <string name="add_new_friend">Add New Friend</string>
     <!--  !Trip Screen  -->
 
 </resources>

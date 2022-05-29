@@ -9,6 +9,8 @@ object Constants {
             const val NAME: String = "name"
             const val EMAIL: String = "email"
             const val IMAGE: String = "image"
+            const val FRIEND_IDS: String = "friendIDs"
+            const val FRIEND_REQUESTS: String = "friendRequests"
         }
 
         object MyTrip {

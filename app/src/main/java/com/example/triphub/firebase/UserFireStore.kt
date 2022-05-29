@@ -50,17 +50,29 @@ class UserFireStore : FireStoreBaseClass() {
             }
     }
 
-    fun updateUser(activity: Activity, userHashMap: HashMap<String, Any>) {
+    fun updateUser(activity: Activity, userId: String, userHashMap: HashMap<String, Any>) {
         mFireStore.collection(Constants.Models.User.USERS)
-            .document(getCurrentUserId())
+            .document(userId)
             .update(userHashMap)
             .addOnSuccessListener {
-                Log.i(activity.javaClass.simpleName, "Profile data updated successfully")
-                Toast.makeText(activity, "Profile data updated successfully", Toast.LENGTH_SHORT)
-                    .show()
                 when (activity) {
                     is MyProfileActivity -> {
+                        activity.hideProgressDialog()
+                        Log.i(activity.javaClass.simpleName, "Profile data updated successfully")
+                        Toast.makeText(
+                            activity,
+                            "Profile data updated successfully",
+                            Toast.LENGTH_SHORT
+                        ).show()
                         activity.onUserUpdateSuccess()
+                    }
+                    is FriendsActivity -> {
+                        activity.hideProgressDialog()
+                        Toast.makeText(
+                            activity,
+                            "Friend request has been sent",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
             }
@@ -69,25 +81,41 @@ class UserFireStore : FireStoreBaseClass() {
                     is MyProfileActivity -> {
                         activity.onUserUpdateFailure()
                     }
+                    is FriendsActivity -> {
+                        Toast.makeText(
+                            activity,
+                            "Could not send friend request",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
             }
     }
 
-    fun getPersonDetails(activity: MyTripPeopleActivity, email: String) {
+    fun getPersonDetails(activity: Activity, email: String) {
         mFireStore.collection(Constants.Models.User.USERS)
             .whereEqualTo(Constants.Models.User.EMAIL, email)
             .get()
             .addOnSuccessListener { document ->
                 if (document.documents.size > 0) {
                     val user = document.documents[0].toObject(User::class.java)!!
-                    activity.personDetails(user)
+                    when (activity) {
+                        is MyTripPeopleActivity -> activity.personDetails(user)
+                        is FriendsActivity -> activity.sendFriendRequest(user)
+                    }
                 } else {
-                    activity.onNoSuchPerson()
+                    when (activity) {
+                        is MyTripPeopleActivity -> activity.onNoSuchPerson()
+                        is FriendsActivity -> activity.onNoSuchPerson()
+                    }
                 }
             }
             .addOnFailureListener { e ->
                 Log.e(activity.javaClass.simpleName, "Error while getting user details", e)
-                activity.onGetPersonDetailsFail()
+                when (activity) {
+                    is MyTripPeopleActivity -> activity.onGetPersonDetailsFail()
+                    is FriendsActivity -> activity.onGetPersonDetailsFail()
+                }
             }
     }
 }
