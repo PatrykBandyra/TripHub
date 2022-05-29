@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
-            android:text="@string/nav_my_profile"
+            android:text="@string/my_friends"
             android:textColor="@color/white"
             android:textSize="@dimen/toolbar_title_text_size"
             android:textStyle="bold" />
@@ -68,7 +68,8 @@
             android:layout_marginHorizontal="20dp"
             android:background="@color/white"
             android:elevation="@dimen/card_view_elevation"
-            app:cardCornerRadius="@dimen/card_view_corner_radius">
+            app:cardCornerRadius="@dimen/card_view_corner_radius"
+            app:cardUseCompatPadding="true">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvFriends"
@@ -82,8 +83,8 @@
             android:id="@+id/btnAddFriend"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="20dp"
-            android:layout_marginTop="30dp"
+            android:layout_marginHorizontal="25dp"
+            android:layout_marginTop="20dp"
             android:background="@drawable/button_rounded_gradient"
             android:foreground="?attr/selectableItemBackground"
             android:text="@string/add_new_friend"

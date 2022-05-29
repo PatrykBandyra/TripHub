@@ -3,16 +3,21 @@ package com.example.triphub.utils
 import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.ColorDrawable
+import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.triphub.R
 
 
-abstract class SwipeToEditCallback(context: Context) :
+abstract class SwipeToEditCallback(context: Context, @DrawableRes icon: Int = 0) :
     ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
 
-    private val editIcon = ContextCompat.getDrawable(context, R.drawable.ic_edit_white_24dp)
+    private val editIcon =
+        if (icon != 0) ContextCompat.getDrawable(context, icon) else ContextCompat.getDrawable(
+            context,
+            R.drawable.ic_edit_white_24dp
+        )
     private val intrinsicWidth = editIcon!!.intrinsicWidth
     private val intrinsicHeight = editIcon!!.intrinsicHeight
     private val background = ColorDrawable()

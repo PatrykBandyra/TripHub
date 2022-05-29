@@ -1,12 +1,18 @@
 package com.example.triphub.adapters
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.example.triphub.R
+import com.example.triphub.activities.FriendsActivity
 import com.example.triphub.databinding.ItemFriendRequestBinding
 import com.example.triphub.databinding.ItemMyTripBinding
+import com.example.triphub.firebase.UserFireStore
 import com.example.triphub.models.User
+import com.example.triphub.utils.Constants
 
 class FriendRequestsAdapter(private val context: Context, var items: ArrayList<User>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -25,8 +31,39 @@ class FriendRequestsAdapter(private val context: Context, var items: ArrayList<U
 
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        TODO("Not yet implemented")
+        val user: User = items[position]
+        if (holder is MyViewHolder) {
+            Glide
+                .with(context)
+                .load(user.image)
+                .placeholder(R.drawable.ic_user_placeholder_black)
+                .into(holder.binding.ivUserImage)
+            holder.binding.tvName.text = user.name
+            holder.binding.tvEmail.text = user.email
+        }
     }
 
     override fun getItemCount() = items.size
+
+    fun removeAt(activity: FriendsActivity, user: User, adapterPosition: Int) {
+        val userFriendRequestId: String = items[adapterPosition].id
+
+        val userHashMap: HashMap<String, Any> = hashMapOf()
+        user.friendRequests.remove(userFriendRequestId)
+        userHashMap[Constants.Models.User.FRIEND_REQUESTS] = user.friendRequests
+
+        UserFireStore().updateUser(activity, user.id, userHashMap, fromAdapter = true)
+    }
+
+    fun notifyAcceptFriendRequest(activity: FriendsActivity, user: User, position: Int) {
+        val userFriendRequestId: String = items[position].id
+
+        val userHashMap: HashMap<String, Any> = hashMapOf()
+        user.friendRequests.remove(userFriendRequestId)
+        userHashMap[Constants.Models.User.FRIEND_REQUESTS] = user.friendRequests
+        user.friendIds.add(userFriendRequestId)
+        userHashMap[Constants.Models.User.FRIEND_IDS] = user.friendIds
+
+        UserFireStore().updateUser(activity, user.id, userHashMap, fromAdapter = true, addition = true)
+    }
 }

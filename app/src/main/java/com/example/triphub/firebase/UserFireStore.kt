@@ -7,6 +7,8 @@ import com.example.triphub.R
 import com.example.triphub.activities.*
 import com.example.triphub.models.User
 import com.example.triphub.utils.Constants
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
 
 class UserFireStore : FireStoreBaseClass() {
@@ -37,6 +39,9 @@ class UserFireStore : FireStoreBaseClass() {
                         is MyProfileActivity -> {
                             activity.setUserDataInUI(loggedInUser)
                         }
+                        is FriendsActivity -> {
+                            activity.onLoadUserDataSuccess(loggedInUser)
+                        }
                     }
                 }
             }
@@ -45,12 +50,21 @@ class UserFireStore : FireStoreBaseClass() {
                     is MainActivity -> {
                         activity.onLoadUserDataFailure()
                     }
+                    is FriendsActivity -> {
+                        activity.showErrorSnackBar(R.string.could_not_load_user_data)
+                    }
                 }
                 Log.e(activity.javaClass.simpleName, "ERROR: ${e.toString()}")
             }
     }
 
-    fun updateUser(activity: Activity, userId: String, userHashMap: HashMap<String, Any>) {
+    fun updateUser(
+        activity: Activity,
+        userId: String,
+        userHashMap: HashMap<String, Any>,
+        fromAdapter: Boolean = false,
+        addition: Boolean = false
+    ) {
         mFireStore.collection(Constants.Models.User.USERS)
             .document(userId)
             .update(userHashMap)
@@ -67,12 +81,20 @@ class UserFireStore : FireStoreBaseClass() {
                         activity.onUserUpdateSuccess()
                     }
                     is FriendsActivity -> {
-                        activity.hideProgressDialog()
-                        Toast.makeText(
-                            activity,
-                            "Friend request has been sent",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        if (fromAdapter) {
+                            if (addition) {
+                                activity.onFriendAdded()
+                            } else {
+                                activity.onFriendRequestRemoval()
+                            }
+                        } else {
+                            activity.hideProgressDialog()
+                            Toast.makeText(
+                                activity,
+                                "Friend request has been sent",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                     }
                 }
             }
@@ -82,11 +104,15 @@ class UserFireStore : FireStoreBaseClass() {
                         activity.onUserUpdateFailure()
                     }
                     is FriendsActivity -> {
-                        Toast.makeText(
-                            activity,
-                            "Could not send friend request",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        if (fromAdapter) {
+                            if (addition) {
+                                activity.showErrorSnackBar(R.string.could_not_add_new_friend)
+                            } else {
+                                activity.showErrorSnackBar(R.string.could_not_remove_friend_request)
+                            }
+                        } else {
+                            activity.showErrorSnackBar(R.string.could_not_send_friend_request)
+                        }
                     }
                 }
             }
@@ -118,4 +144,35 @@ class UserFireStore : FireStoreBaseClass() {
                 }
             }
     }
+
+    fun loadUsersFromFriendRequests(
+        activity: FriendsActivity,
+        user: User,
+        latestVisibleDocument: DocumentSnapshot?
+    ) {
+        var query = mFireStore.collection(Constants.Models.User.USERS)
+            .whereIn(Constants.Models.User.ID, user.friendRequests)
+            .orderBy(Constants.Models.User.NAME, Query.Direction.DESCENDING)
+        if (latestVisibleDocument != null) {
+            query = query.startAfter(latestVisibleDocument.toObject(User::class.java)!!.name)
+        }
+        query.limit(Constants.Models.User.LOAD_LIMIT)
+            .get()
+            .addOnSuccessListener { documentSnapshots ->
+                var latestDocument: DocumentSnapshot? = null
+                if (documentSnapshots.size() > 0) {
+                    latestDocument = documentSnapshots.documents[documentSnapshots.size() - 1]
+                }
+                val friendRequestsUsers: ArrayList<User> = arrayListOf()
+                documentSnapshots.forEach {
+                    val friendRequestUser = it.toObject(User::class.java)
+                    friendRequestsUsers.add(friendRequestUser)
+                }
+                activity.onUsersFromFriendRequestsLoadSuccess(latestDocument, friendRequestsUsers)
+            }
+            .addOnFailureListener {
+                activity.onUsersFromFriendRequestsLoadFailure()
+            }
+    }
+
 }

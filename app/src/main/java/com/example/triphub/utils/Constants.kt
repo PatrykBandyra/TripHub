@@ -11,6 +11,7 @@ object Constants {
             const val IMAGE: String = "image"
             const val FRIEND_IDS: String = "friendIDs"
             const val FRIEND_REQUESTS: String = "friendRequests"
+            const val LOAD_LIMIT: Long = 8
         }
 
         object MyTrip {

@@ -86,7 +86,6 @@ class MyTripFireStore : FireStoreBaseClass() {
                 activity.onMyTripsListLoadSuccess(latestDocument, myTripsList)
             }
             .addOnFailureListener {
-                it.printStackTrace()
                 activity.onMyTripsListLoadFailure()
             }
     }

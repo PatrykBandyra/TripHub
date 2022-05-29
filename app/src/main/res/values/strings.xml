@@ -131,6 +131,13 @@
     <string name="my_friends">My Friends</string>
     <string name="friend_requests">Friend Requests</string>
     <string name="add_new_friend">Add New Friend</string>
+    <string name="could_not_load_user_data">Could not load user data</string>
+    <string name="delete_friend_request">Are you sure you want to delete this friend request?</string>
+    <string name="accept_friend_request">Are you sure you want to accept this friend request?</string>
+    <string name="could_not_load_friend_requests">Could not load friend requests</string>
+    <string name="could_not_remove_friend_request">Could not remove friend request</string>
+    <string name="could_not_send_friend_request">Could not send friend request</string>
+    <string name="could_not_add_new_friend">Could not add a new friend</string>
     <!--  !Trip Screen  -->
 
 </resources>
