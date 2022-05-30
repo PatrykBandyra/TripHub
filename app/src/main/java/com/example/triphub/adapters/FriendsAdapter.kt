@@ -38,6 +38,12 @@ class FriendsAdapter(private val context: Context, var items: MutableList<User>)
                 .into(holder.binding.ivUserImage)
             holder.binding.tvName.text = user.name
             holder.binding.tvEmail.text = user.email
+
+            holder.itemView.setOnClickListener {
+                if (onClickListener != null) {
+                    onClickListener!!.onClick(position, user)
+                }
+            }
         }
     }
 

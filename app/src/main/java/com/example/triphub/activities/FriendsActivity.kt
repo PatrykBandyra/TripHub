@@ -3,6 +3,7 @@ package com.example.triphub.activities
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -280,6 +281,15 @@ class FriendsActivity : BaseActivity<ActivityFriendsBinding>() {
             if (mIsFirstFriendsLoad) {
                 mIsFirstFriendsLoad = false
                 mFriendsAdapter = FriendsAdapter(this, friends)
+                mFriendsAdapter!!.setOnClickListener(object : FriendsAdapter.OnClickListener {
+                    override fun onClick(position: Int, friend: User) {
+                        val intent = Intent(this@FriendsActivity, PrivateChatActivity::class.java)
+                        intent.putExtra(Constants.Intent.USER_DATA, mUser)
+                        intent.putExtra(Constants.Intent.FRIEND, friend)
+                        startActivity(intent)
+                    }
+
+                })
                 binding.rvFriends.layoutManager = LinearLayoutManager(this)
                 binding.rvFriends.adapter = mFriendsAdapter
 
