@@ -10,6 +10,7 @@ import com.example.triphub.utils.Constants
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
+import com.google.firebase.firestore.ktx.toObject
 
 class UserFireStore : FireStoreBaseClass() {
 
@@ -213,6 +214,28 @@ class UserFireStore : FireStoreBaseClass() {
             }
             .addOnFailureListener {
                 activity.onFriendsLoadFailure()
+            }
+    }
+
+    fun getFriends(activity: Activity, user: User) {
+        mFireStore.collection(Constants.Models.User.USERS)
+            .whereIn(Constants.Models.User.ID, user.friendIds)
+            .orderBy(Constants.Models.User.NAME, Query.Direction.DESCENDING)
+            .get()
+            .addOnSuccessListener { documentSnapshots ->
+                val friends: ArrayList<User> = arrayListOf()
+                documentSnapshots.forEach {
+                    val friend = it.toObject(User::class.java)
+                    friends.add(friend)
+                }
+                when (activity) {
+                    is MainActivity -> activity.onGetFriendsSuccess(friends)
+                }
+            }
+            .addOnFailureListener {
+                when (activity) {
+                    is MainActivity -> activity.onGetFriendsFailure()
+                }
             }
     }
 

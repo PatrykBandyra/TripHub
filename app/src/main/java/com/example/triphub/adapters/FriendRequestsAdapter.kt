@@ -12,7 +12,7 @@ import com.example.triphub.firebase.UserFireStore
 import com.example.triphub.models.User
 import com.example.triphub.utils.Constants
 
-class FriendRequestsAdapter(private val context: Context, var items: ArrayList<User>) :
+class FriendRequestsAdapter(private val context: Context, var items: MutableList<User>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private inner class MyViewHolder(val binding: ItemFriendRequestBinding) :

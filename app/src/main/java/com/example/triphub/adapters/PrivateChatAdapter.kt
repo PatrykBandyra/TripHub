@@ -6,13 +6,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.triphub.R
-import com.example.triphub.activities.FriendsActivity
 import com.example.triphub.databinding.ItemFriendBinding
-import com.example.triphub.firebase.UserFireStore
 import com.example.triphub.models.User
-import com.example.triphub.utils.Constants
 
-class FriendsAdapter(private val context: Context, var items: MutableList<User>) :
+class PrivateChatAdapter(private val context: Context, var items: MutableList<User>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var onClickListener: OnClickListener? = null
@@ -30,28 +27,24 @@ class FriendsAdapter(private val context: Context, var items: MutableList<User>)
         )
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val user: User = items[position]
+        val friend: User = items[position]
         if (holder is MyViewHolder) {
             Glide.with(context)
-                .load(user.image)
+                .load(friend.image)
                 .placeholder(R.drawable.ic_user_placeholder_black)
                 .into(holder.binding.ivUserImage)
-            holder.binding.tvName.text = user.name
-            holder.binding.tvEmail.text = user.email
+            holder.binding.tvName.text = friend.name
+            holder.binding.tvEmail.text = friend.email
+
+            holder.itemView.setOnClickListener {
+                if (onClickListener != null) {
+                    onClickListener!!.onClick(position, friend)
+                }
+            }
         }
     }
 
-    override fun getItemCount() = items.size
-
-    fun removeAt(activity: FriendsActivity, user: User, position: Int) {
-        val userFriendId: String = items[position].id
-
-        val userHashMap: HashMap<String, Any> = hashMapOf()
-        user.friendIds.remove(userFriendId)
-        userHashMap[Constants.Models.User.FRIEND_IDS] = user.friendIds
-
-        UserFireStore().updateUser(activity, user.id, userHashMap, isFromAdapter = true)
-    }
+    override fun getItemCount(): Int = items.size
 
     interface OnClickListener {
         fun onClick(position: Int, friend: User)

@@ -31,6 +31,7 @@ object Constants {
     }
 
     object Intent {
+        const val FRIEND: String = "friend"
         const val USER_DATA: String = "userData"
         const val ERROR: String = "error"
 

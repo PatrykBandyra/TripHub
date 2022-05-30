@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.triphub.R
 import com.example.triphub.adapters.MyTripsAdapter
+import com.example.triphub.adapters.PrivateChatAdapter
 import com.example.triphub.databinding.ActivityMainBinding
 import com.example.triphub.databinding.NavViewHeaderChatBinding
 import com.example.triphub.databinding.NavViewHeaderMenuBinding
@@ -43,6 +44,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>(),
 
     private var mIsFirstTripsLoad: Boolean = true
     private lateinit var mTripsAdapter: MyTripsAdapter
+
+    private lateinit var mPrivateChatAdapter: PrivateChatAdapter
 
     private val myProfileLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -145,6 +148,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>(),
 
         navHeaderMenuBinding.tvUsername.text = user.name
         navHeaderMenuBinding.tvEmail.text = user.email
+
+        UserFireStore().getFriends(this, user)
     }
 
     fun onLoadUserDataFailure() {
@@ -243,5 +248,23 @@ class MainActivity : BaseActivity<ActivityMainBinding>(),
     fun onTripDeletionSuccess(position: Int) {
         hideProgressDialog()
         myTrips.removeAt(position)
+    }
+
+    fun onGetFriendsSuccess(friends: ArrayList<User>) {
+        navHeaderChatBinding.rvChat.layoutManager = LinearLayoutManager(this)
+        mPrivateChatAdapter = PrivateChatAdapter(this@MainActivity, friends)
+        navHeaderChatBinding.rvChat.adapter = mPrivateChatAdapter
+        mPrivateChatAdapter.setOnClickListener(object : PrivateChatAdapter.OnClickListener {
+            override fun onClick(position: Int, friend: User) {
+                val intent = Intent(this@MainActivity, PrivateChatActivity::class.java)
+                intent.putExtra(Constants.Intent.USER_DATA, userData)
+                intent.putExtra(Constants.Intent.FRIEND, friend)
+                startActivity(intent)
+            }
+        })
+    }
+
+    fun onGetFriendsFailure() {
+        showErrorSnackBar(R.string.could_not_load_private_chat)
     }
 }

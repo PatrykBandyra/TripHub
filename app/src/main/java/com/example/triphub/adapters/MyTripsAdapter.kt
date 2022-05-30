@@ -18,7 +18,7 @@ import com.example.triphub.utils.Constants
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 
-class MyTripsAdapter(private val context: Context, var items: ArrayList<MyTrip>) :
+class MyTripsAdapter(private val context: Context, var items: MutableList<MyTrip>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var onClickListener: OnClickListener? = null

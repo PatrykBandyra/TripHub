@@ -141,6 +141,7 @@
     <string name="delete_friend">Are you sure you want to remove this friend?</string>
     <string name="could_not_remove_friend">Could not remove friend</string>
     <string name="could_not_load_friends">Could not load friends</string>
+    <string name="could_not_load_private_chat">Could not load private conversations</string>
     <!--  !Trip Screen  -->
 
 </resources>
