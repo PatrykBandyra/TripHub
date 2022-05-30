@@ -7,26 +7,25 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.triphub.R
 import com.example.triphub.activities.FriendsActivity
-import com.example.triphub.databinding.ItemFriendRequestBinding
+import com.example.triphub.databinding.ItemFriendBinding
 import com.example.triphub.firebase.UserFireStore
 import com.example.triphub.models.User
 import com.example.triphub.utils.Constants
 
-class FriendRequestsAdapter(private val context: Context, var items: ArrayList<User>) :
+class FriendsAdapter(private val context: Context, var items: ArrayList<User>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private inner class MyViewHolder(val binding: ItemFriendRequestBinding) :
+    private inner class MyViewHolder(val binding: ItemFriendBinding) :
         RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
         MyViewHolder(
-            ItemFriendRequestBinding.inflate(
+            ItemFriendBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
             )
         )
-
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val user: User = items[position]
@@ -42,38 +41,13 @@ class FriendRequestsAdapter(private val context: Context, var items: ArrayList<U
 
     override fun getItemCount() = items.size
 
-    fun removeAt(activity: FriendsActivity, user: User, adapterPosition: Int) {
-        val userFriendRequestId: String = items[adapterPosition].id
+    fun removeAt(activity: FriendsActivity, user: User, position: Int) {
+        val userFriendId: String = items[position].id
 
         val userHashMap: HashMap<String, Any> = hashMapOf()
-        user.friendRequests.remove(userFriendRequestId)
-        userHashMap[Constants.Models.User.FRIEND_REQUESTS] = user.friendRequests
-
-        UserFireStore().updateUser(
-            activity,
-            user.id,
-            userHashMap,
-            isFromAdapter = true,
-            isFriendRequest = true
-        )
-    }
-
-    fun notifyAcceptFriendRequest(activity: FriendsActivity, user: User, position: Int) {
-        val userFriendRequestId: String = items[position].id
-
-        val userHashMap: HashMap<String, Any> = hashMapOf()
-        user.friendRequests.remove(userFriendRequestId)
-        userHashMap[Constants.Models.User.FRIEND_REQUESTS] = user.friendRequests
-        user.friendIds.add(userFriendRequestId)
+        user.friendIds.remove(userFriendId)
         userHashMap[Constants.Models.User.FRIEND_IDS] = user.friendIds
 
-        UserFireStore().updateUser(
-            activity,
-            user.id,
-            userHashMap,
-            isFromAdapter = true,
-            isAddition = true,
-            isFriendRequest = true
-        )
+        UserFireStore().updateUser(activity, user.id, userHashMap, isFromAdapter = true)
     }
 }

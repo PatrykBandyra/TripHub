@@ -9,7 +9,7 @@ object Constants {
             const val NAME: String = "name"
             const val EMAIL: String = "email"
             const val IMAGE: String = "image"
-            const val FRIEND_IDS: String = "friendIDs"
+            const val FRIEND_IDS: String = "friendIds"
             const val FRIEND_REQUESTS: String = "friendRequests"
             const val LOAD_LIMIT: Long = 8
         }

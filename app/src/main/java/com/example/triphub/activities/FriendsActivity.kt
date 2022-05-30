@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.triphub.R
 import com.example.triphub.adapters.FriendRequestsAdapter
+import com.example.triphub.adapters.FriendsAdapter
 import com.example.triphub.databinding.ActivityFriendsBinding
 import com.example.triphub.databinding.DialogAddPersonBinding
 import com.example.triphub.firebase.UserFireStore
@@ -31,9 +32,13 @@ class FriendsActivity : BaseActivity<ActivityFriendsBinding>() {
     private var mLatestVisibleDocumentFriendRequests: DocumentSnapshot? = null
     private var mIsFirstFriendRequestsLoad: Boolean = true
     private lateinit var mFriendRequestsAdapter: FriendRequestsAdapter
-    private var mUserFriendRequestAcceptPosition: Int? = null
+    private var mUserFriendRequestPosition: Int? = null
 
-    private var latestVisibleDocumentFriends: DocumentSnapshot? = null
+    // Friends
+    private var mLatestVisibleDocumentFriends: DocumentSnapshot? = null
+    private var mIsFirstFriendsLoad: Boolean = true
+    private lateinit var mFriendsAdapter: FriendsAdapter
+    private var mUserFriendPosition: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -128,6 +133,11 @@ class FriendsActivity : BaseActivity<ActivityFriendsBinding>() {
                 mLatestVisibleDocumentFriendRequests
             )
         }
+        Log.d("DUPA", mUser.friendIds.toString())
+        Log.d("DUPA", mUser.id)
+        if (mUser.friendIds.isNotEmpty()) {
+            UserFireStore().loadFriends(this, mUser, mLatestVisibleDocumentFriends)
+        }
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -143,7 +153,6 @@ class FriendsActivity : BaseActivity<ActivityFriendsBinding>() {
                 mIsFirstFriendRequestsLoad = false
                 mFriendRequestsAdapter = FriendRequestsAdapter(this, friendRequestsUsers)
                 binding.rvRequests.layoutManager = LinearLayoutManager(this)
-                mFriendRequestsAdapter = FriendRequestsAdapter(this, friendRequestsUsers)
                 binding.rvRequests.adapter = mFriendRequestsAdapter
 
                 // Set up scroll handler
@@ -166,7 +175,7 @@ class FriendsActivity : BaseActivity<ActivityFriendsBinding>() {
                     object : SwipeToEditCallback(this, R.drawable.ic_checked_white) {
                         override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                             val position: Int = viewHolder.adapterPosition
-                            mUserFriendRequestAcceptPosition = position
+                            mUserFriendRequestPosition = position
 
                             val acceptDialog = AlertDialog.Builder(this@FriendsActivity)
                             acceptDialog.setIcon(R.drawable.ic_checked_green)
@@ -194,7 +203,7 @@ class FriendsActivity : BaseActivity<ActivityFriendsBinding>() {
                 val deleteFriendRequestSwipeHandler = object : SwipeToDeleteCallback(this) {
                     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                         val position: Int = viewHolder.adapterPosition
-                        mUserFriendRequestAcceptPosition = position
+                        mUserFriendRequestPosition = position
 
                         val deleteDialog = AlertDialog.Builder(this@FriendsActivity)
                         deleteDialog.setIcon(R.drawable.ic_delete_red_24dp)
@@ -237,8 +246,8 @@ class FriendsActivity : BaseActivity<ActivityFriendsBinding>() {
             "Friend request has been deleted",
             Toast.LENGTH_SHORT
         ).show()
-        mFriendRequestsAdapter.items.removeAt(mUserFriendRequestAcceptPosition!!)
-        mFriendRequestsAdapter.notifyItemRemoved(mUserFriendRequestAcceptPosition!!)
+        mFriendRequestsAdapter.items.removeAt(mUserFriendRequestPosition!!)
+        mFriendRequestsAdapter.notifyItemRemoved(mUserFriendRequestPosition!!)
     }
 
     fun onFriendAdded() {
@@ -248,7 +257,94 @@ class FriendsActivity : BaseActivity<ActivityFriendsBinding>() {
             "New friend has been added",
             Toast.LENGTH_SHORT
         ).show()
-        mFriendRequestsAdapter.items.removeAt(mUserFriendRequestAcceptPosition!!)
-        mFriendRequestsAdapter.notifyItemRemoved(mUserFriendRequestAcceptPosition!!)
+//        mFriendRequestsAdapter.items.removeAt(mUserFriendRequestPosition!!)
+//        mFriendRequestsAdapter.notifyItemRemoved(mUserFriendRequestPosition!!)
+        mIsFirstFriendRequestsLoad = true
+        mIsFirstFriendsLoad = true
+        mLatestVisibleDocumentFriends = null
+        mLatestVisibleDocumentFriendRequests = null
+        UserFireStore().loadUserData(this)
+        if (mUser.friendIds.isNotEmpty()) {
+            mLatestVisibleDocumentFriends = null
+            UserFireStore().loadFriends(this, mUser, mLatestVisibleDocumentFriends)
+        }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun onFriendsLoadSuccess(latestDocument: DocumentSnapshot?, friends: ArrayList<User>) {
+        mLatestVisibleDocumentFriends = latestDocument
+
+        // Set up friends recycler view
+        if (mUser.friendIds.isNotEmpty()) {
+            if (mIsFirstFriendsLoad) {
+                mIsFirstFriendsLoad = false
+                mFriendsAdapter = FriendsAdapter(this, friends)
+                binding.rvFriends.layoutManager = LinearLayoutManager(this)
+                binding.rvFriends.adapter = mFriendsAdapter
+
+                // Set up scroll handler
+                binding.rvFriends.setOnScrollChangeListener { view, scrollX, scrollY, oldScrollX, oldScrollY ->
+                    val layoutManager =
+                        ((view as RecyclerView).layoutManager as LinearLayoutManager)
+                    if (layoutManager.findLastCompletelyVisibleItemPosition() == mFriendsAdapter.itemCount - 1) {
+                        if (mUser.friendIds.isNotEmpty()) {
+                            UserFireStore().loadFriends(
+                                this,
+                                mUser,
+                                mLatestVisibleDocumentFriends
+                            )
+                        }
+                    }
+                }
+
+                // Set up swipe handlers
+                val deleteFriendSwipeHandler = object : SwipeToDeleteCallback(this) {
+                    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                        val position: Int = viewHolder.adapterPosition
+                        mUserFriendPosition = position
+
+                        val deleteDialog = AlertDialog.Builder(this@FriendsActivity)
+                        deleteDialog.setIcon(R.drawable.ic_delete_red_24dp)
+                        deleteDialog.setTitle(R.string.delete_friend)
+                        deleteDialog.setPositiveButton(getString(R.string.yes)) { dialog, which ->
+                            mFriendsAdapter.removeAt(
+                                this@FriendsActivity,
+                                mUser,
+                                position
+                            )
+                            mFriendsAdapter.notifyItemChanged(viewHolder.adapterPosition) // To always remove red banner
+                            dialog.dismiss()
+                            showProgressDialog()
+                        }
+                        deleteDialog.setNegativeButton(getString(R.string.no)) { dialog, _ ->
+                            mFriendsAdapter.notifyItemChanged(viewHolder.adapterPosition) // To remove red banner
+                            dialog.dismiss()
+                        }
+                        deleteDialog.show()
+                    }
+                }
+
+                val deleteItemTouchHelper = ItemTouchHelper(deleteFriendSwipeHandler)
+                deleteItemTouchHelper.attachToRecyclerView(binding.rvFriends)
+            } else {
+                mFriendsAdapter.items.addAll(friends)
+                mFriendsAdapter.notifyDataSetChanged()
+            }
+        }
+    }
+
+    fun onFriendRemoval() {
+        hideProgressDialog()
+        Toast.makeText(
+            this,
+            "Friend has been removed",
+            Toast.LENGTH_SHORT
+        ).show()
+        mFriendsAdapter.items.removeAt(mUserFriendPosition!!)
+        mFriendsAdapter.notifyItemRemoved(mUserFriendPosition!!)
+    }
+
+    fun onFriendsLoadFailure() {
+        showErrorSnackBar(R.string.could_not_load_friends)
     }
 }

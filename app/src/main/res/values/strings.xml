@@ -138,6 +138,9 @@
     <string name="could_not_remove_friend_request">Could not remove friend request</string>
     <string name="could_not_send_friend_request">Could not send friend request</string>
     <string name="could_not_add_new_friend">Could not add a new friend</string>
+    <string name="delete_friend">Are you sure you want to remove this friend?</string>
+    <string name="could_not_remove_friend">Could not remove friend</string>
+    <string name="could_not_load_friends">Could not load friends</string>
     <!--  !Trip Screen  -->
 
 </resources>

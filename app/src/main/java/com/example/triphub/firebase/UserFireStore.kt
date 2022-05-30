@@ -54,7 +54,7 @@ class UserFireStore : FireStoreBaseClass() {
                         activity.showErrorSnackBar(R.string.could_not_load_user_data)
                     }
                 }
-                Log.e(activity.javaClass.simpleName, "ERROR: ${e.toString()}")
+                Log.e(activity.javaClass.simpleName, "ERROR: $e")
             }
     }
 
@@ -62,8 +62,9 @@ class UserFireStore : FireStoreBaseClass() {
         activity: Activity,
         userId: String,
         userHashMap: HashMap<String, Any>,
-        fromAdapter: Boolean = false,
-        addition: Boolean = false
+        isFromAdapter: Boolean = false,
+        isAddition: Boolean = false,
+        isFriendRequest: Boolean = false
     ) {
         mFireStore.collection(Constants.Models.User.USERS)
             .document(userId)
@@ -81,11 +82,15 @@ class UserFireStore : FireStoreBaseClass() {
                         activity.onUserUpdateSuccess()
                     }
                     is FriendsActivity -> {
-                        if (fromAdapter) {
-                            if (addition) {
+                        if (isFromAdapter) {
+                            if (isAddition) {
                                 activity.onFriendAdded()
                             } else {
-                                activity.onFriendRequestRemoval()
+                                if (isFriendRequest) {
+                                    activity.onFriendRequestRemoval()
+                                } else {
+                                    activity.onFriendRemoval()
+                                }
                             }
                         } else {
                             activity.hideProgressDialog()
@@ -104,11 +109,17 @@ class UserFireStore : FireStoreBaseClass() {
                         activity.onUserUpdateFailure()
                     }
                     is FriendsActivity -> {
-                        if (fromAdapter) {
-                            if (addition) {
-                                activity.showErrorSnackBar(R.string.could_not_add_new_friend)
+                        if (isFromAdapter) {
+                            if (isAddition) {
+                                if (isFriendRequest) {
+                                    activity.showErrorSnackBar(R.string.could_not_add_new_friend)
+                                }
                             } else {
-                                activity.showErrorSnackBar(R.string.could_not_remove_friend_request)
+                                if (isFriendRequest) {
+                                    activity.showErrorSnackBar(R.string.could_not_remove_friend_request)
+                                } else {
+                                    activity.showErrorSnackBar(R.string.could_not_remove_friend)
+                                }
                             }
                         } else {
                             activity.showErrorSnackBar(R.string.could_not_send_friend_request)
@@ -172,6 +183,36 @@ class UserFireStore : FireStoreBaseClass() {
             }
             .addOnFailureListener {
                 activity.onUsersFromFriendRequestsLoadFailure()
+            }
+    }
+
+    fun loadFriends(
+        activity: FriendsActivity,
+        user: User,
+        latestVisibleDocument: DocumentSnapshot?
+    ) {
+        var query = mFireStore.collection(Constants.Models.User.USERS)
+            .whereIn(Constants.Models.User.ID, user.friendIds)
+            .orderBy(Constants.Models.User.NAME, Query.Direction.DESCENDING)
+        if (latestVisibleDocument != null) {
+            query = query.startAfter(latestVisibleDocument.toObject(User::class.java)!!.name)
+        }
+        query.limit(Constants.Models.User.LOAD_LIMIT)
+            .get()
+            .addOnSuccessListener { documentSnapshots ->
+                var latestDocument: DocumentSnapshot? = null
+                if (documentSnapshots.size() > 0) {
+                    latestDocument = documentSnapshots.documents[documentSnapshots.size() - 1]
+                }
+                val friends: ArrayList<User> = arrayListOf()
+                documentSnapshots.forEach {
+                    val friend = it.toObject(User::class.java)
+                    friends.add(friend)
+                }
+                activity.onFriendsLoadSuccess(latestDocument, friends)
+            }
+            .addOnFailureListener {
+                activity.onFriendsLoadFailure()
             }
     }
 
