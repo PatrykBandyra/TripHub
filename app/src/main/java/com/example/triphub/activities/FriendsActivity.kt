@@ -28,14 +28,10 @@ class FriendsActivity : BaseActivity<ActivityFriendsBinding>() {
     private lateinit var mUser: User
 
     // Friend requests
-    private var mLatestVisibleDocumentFriendRequests: DocumentSnapshot? = null
-    private var mIsFirstFriendRequestsLoad: Boolean = true
     private var mFriendRequestsAdapter: FriendRequestsAdapter? = null
     private var mUserFriendRequestPosition: Int? = null
 
     // Friends
-    private var mLatestVisibleDocumentFriends: DocumentSnapshot? = null
-    private var mIsFirstFriendsLoad: Boolean = true
     private var mFriendsAdapter: FriendsAdapter? = null
     private var mUserFriendPosition: Int? = null
 
@@ -128,107 +124,81 @@ class FriendsActivity : BaseActivity<ActivityFriendsBinding>() {
         if (mUser.friendRequests.isNotEmpty()) {
             UserFireStore().loadUsersFromFriendRequests(
                 this,
-                mUser,
-                mLatestVisibleDocumentFriendRequests
+                mUser
             )
         }
         if (mUser.friendIds.isNotEmpty()) {
-            UserFireStore().loadFriends(this, mUser, mLatestVisibleDocumentFriends)
+            UserFireStore().loadFriends(this, mUser)
         }
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun onUsersFromFriendRequestsLoadSuccess(
-        latestDocument: DocumentSnapshot?,
-        friendRequestsUsers: ArrayList<User>
-    ) {
-        mLatestVisibleDocumentFriendRequests = latestDocument
+    fun onUsersFromFriendRequestsLoadSuccess(friendRequestsUsers: ArrayList<User>) {
 
         // Set up friend notifications recycler view
         if (mUser.friendRequests.isNotEmpty()) {
-            if (mIsFirstFriendRequestsLoad) {
-                mIsFirstFriendRequestsLoad = false
-                mFriendRequestsAdapter = FriendRequestsAdapter(this, friendRequestsUsers)
-                binding.rvRequests.layoutManager = LinearLayoutManager(this)
-                binding.rvRequests.adapter = mFriendRequestsAdapter
+            mFriendRequestsAdapter = FriendRequestsAdapter(this, friendRequestsUsers)
+            binding.rvRequests.layoutManager = LinearLayoutManager(this)
+            binding.rvRequests.adapter = mFriendRequestsAdapter
 
-                // Set up scroll handler
-                binding.rvRequests.setOnScrollChangeListener { view, scrollX, scrollY, oldScrollX, oldScrollY ->
-                    val layoutManager =
-                        ((view as RecyclerView).layoutManager as LinearLayoutManager)
-                    if (layoutManager.findLastCompletelyVisibleItemPosition() == mFriendRequestsAdapter!!.itemCount - 1) {
-                        if (mUser.friendRequests.isNotEmpty()) {
-                            UserFireStore().loadUsersFromFriendRequests(
-                                this,
-                                mUser,
-                                mLatestVisibleDocumentFriendRequests
-                            )
-                        }
-                    }
-                }
-
-                // Set up swipe handlers
-                val acceptFriendRequestSwipeHandler =
-                    object : SwipeToEditCallback(this, R.drawable.ic_checked_white) {
-                        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                            val position: Int = viewHolder.adapterPosition
-                            mUserFriendRequestPosition = position
-
-                            val acceptDialog = AlertDialog.Builder(this@FriendsActivity)
-                            acceptDialog.setIcon(R.drawable.ic_checked_green)
-                            acceptDialog.setTitle(R.string.accept_friend_request)
-                            acceptDialog.setPositiveButton(R.string.yes) { dialog, _ ->
-                                mFriendRequestsAdapter!!.notifyItemChanged(position)  // To remove green banner
-                                mFriendRequestsAdapter!!.notifyAcceptFriendRequest(
-                                    this@FriendsActivity,
-                                    mUser,
-                                    position
-                                )
-                                dialog.dismiss()
-                                showProgressDialog()
-                            }
-                            acceptDialog.setNegativeButton(R.string.no) { dialog, _ ->
-                                mFriendRequestsAdapter!!.notifyItemChanged(position)  // To remove green banner
-                                dialog.dismiss()
-                            }
-                            acceptDialog.show()
-                        }
-                    }
-                val editItemTouchHelper = ItemTouchHelper(acceptFriendRequestSwipeHandler)
-                editItemTouchHelper.attachToRecyclerView(binding.rvRequests)
-
-                val deleteFriendRequestSwipeHandler = object : SwipeToDeleteCallback(this) {
+            // Set up swipe handlers
+            val acceptFriendRequestSwipeHandler =
+                object : SwipeToEditCallback(this, R.drawable.ic_checked_white) {
                     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                         val position: Int = viewHolder.adapterPosition
                         mUserFriendRequestPosition = position
 
-                        val deleteDialog = AlertDialog.Builder(this@FriendsActivity)
-                        deleteDialog.setIcon(R.drawable.ic_delete_red_24dp)
-                        deleteDialog.setTitle(R.string.delete_friend_request)
-                        deleteDialog.setPositiveButton(getString(R.string.yes)) { dialog, which ->
-                            mFriendRequestsAdapter!!.removeAt(
+                        val acceptDialog = AlertDialog.Builder(this@FriendsActivity)
+                        acceptDialog.setIcon(R.drawable.ic_checked_green)
+                        acceptDialog.setTitle(R.string.accept_friend_request)
+                        acceptDialog.setPositiveButton(R.string.yes) { dialog, _ ->
+                            mFriendRequestsAdapter!!.notifyItemChanged(position)  // To remove green banner
+                            mFriendRequestsAdapter!!.notifyAcceptFriendRequest(
                                 this@FriendsActivity,
                                 mUser,
                                 position
                             )
-                            mFriendRequestsAdapter!!.notifyItemChanged(viewHolder.adapterPosition) // To always remove red banner
                             dialog.dismiss()
                             showProgressDialog()
                         }
-                        deleteDialog.setNegativeButton(getString(R.string.no)) { dialog, _ ->
-                            mFriendRequestsAdapter!!.notifyItemChanged(viewHolder.adapterPosition) // To remove red banner
+                        acceptDialog.setNegativeButton(R.string.no) { dialog, _ ->
+                            mFriendRequestsAdapter!!.notifyItemChanged(position)  // To remove green banner
                             dialog.dismiss()
                         }
-                        deleteDialog.show()
+                        acceptDialog.show()
                     }
                 }
+            val editItemTouchHelper = ItemTouchHelper(acceptFriendRequestSwipeHandler)
+            editItemTouchHelper.attachToRecyclerView(binding.rvRequests)
 
-                val deleteItemTouchHelper = ItemTouchHelper(deleteFriendRequestSwipeHandler)
-                deleteItemTouchHelper.attachToRecyclerView(binding.rvRequests)
-            } else {
-                mFriendRequestsAdapter!!.items.addAll(friendRequestsUsers)
-                mFriendRequestsAdapter!!.notifyDataSetChanged()
+            val deleteFriendRequestSwipeHandler = object : SwipeToDeleteCallback(this) {
+                override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                    val position: Int = viewHolder.adapterPosition
+                    mUserFriendRequestPosition = position
+
+                    val deleteDialog = AlertDialog.Builder(this@FriendsActivity)
+                    deleteDialog.setIcon(R.drawable.ic_delete_red_24dp)
+                    deleteDialog.setTitle(R.string.delete_friend_request)
+                    deleteDialog.setPositiveButton(getString(R.string.yes)) { dialog, which ->
+                        mFriendRequestsAdapter!!.removeAt(
+                            this@FriendsActivity,
+                            mUser,
+                            position
+                        )
+                        mFriendRequestsAdapter!!.notifyItemChanged(viewHolder.adapterPosition) // To always remove red banner
+                        dialog.dismiss()
+                        showProgressDialog()
+                    }
+                    deleteDialog.setNegativeButton(getString(R.string.no)) { dialog, _ ->
+                        mFriendRequestsAdapter!!.notifyItemChanged(viewHolder.adapterPosition) // To remove red banner
+                        dialog.dismiss()
+                    }
+                    deleteDialog.show()
+                }
             }
+
+            val deleteItemTouchHelper = ItemTouchHelper(deleteFriendRequestSwipeHandler)
+            deleteItemTouchHelper.attachToRecyclerView(binding.rvRequests)
         }
     }
 
@@ -255,92 +225,60 @@ class FriendsActivity : BaseActivity<ActivityFriendsBinding>() {
             "New friend has been added",
             Toast.LENGTH_SHORT
         ).show()
-//        mFriendRequestsAdapter.items.removeAt(mUserFriendRequestPosition!!)
-//        mFriendRequestsAdapter.notifyItemRemoved(mUserFriendRequestPosition!!)
-        mFriendsAdapter?.items?.clear()
-        mFriendRequestsAdapter?.items?.clear()
-        mFriendsAdapter?.notifyDataSetChanged()
-        mFriendRequestsAdapter?.notifyDataSetChanged()
-        mIsFirstFriendRequestsLoad = true
-        mIsFirstFriendsLoad = true
-        mLatestVisibleDocumentFriends = null
-        mLatestVisibleDocumentFriendRequests = null
-        UserFireStore().loadUserData(this)
+        mFriendRequestsAdapter?.items?.removeAt(mUserFriendRequestPosition!!)
+        mFriendRequestsAdapter?.notifyItemRemoved(mUserFriendRequestPosition!!)
         if (mUser.friendIds.isNotEmpty()) {
-            mLatestVisibleDocumentFriends = null
-            UserFireStore().loadFriends(this, mUser, mLatestVisibleDocumentFriends)
+            UserFireStore().loadFriends(this, mUser)
         }
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun onFriendsLoadSuccess(latestDocument: DocumentSnapshot?, friends: ArrayList<User>) {
-        mLatestVisibleDocumentFriends = latestDocument
+    fun onFriendsLoadSuccess(friends: ArrayList<User>) {
 
         // Set up friends recycler view
         if (mUser.friendIds.isNotEmpty()) {
-            if (mIsFirstFriendsLoad) {
-                mIsFirstFriendsLoad = false
-                mFriendsAdapter = FriendsAdapter(this, friends)
-                mFriendsAdapter!!.setOnClickListener(object : FriendsAdapter.OnClickListener {
-                    override fun onClick(position: Int, friend: User) {
-                        val intent = Intent(this@FriendsActivity, PrivateChatActivity::class.java)
-                        intent.putExtra(Constants.Intent.USER_DATA, mUser)
-                        intent.putExtra(Constants.Intent.FRIEND, friend)
-                        startActivity(intent)
-                    }
-
-                })
-                binding.rvFriends.layoutManager = LinearLayoutManager(this)
-                binding.rvFriends.adapter = mFriendsAdapter
-
-                // Set up scroll handler
-                binding.rvFriends.setOnScrollChangeListener { view, scrollX, scrollY, oldScrollX, oldScrollY ->
-                    val layoutManager =
-                        ((view as RecyclerView).layoutManager as LinearLayoutManager)
-                    if (layoutManager.findLastCompletelyVisibleItemPosition() == mFriendsAdapter!!.itemCount - 1) {
-                        if (mUser.friendIds.isNotEmpty()) {
-                            UserFireStore().loadFriends(
-                                this,
-                                mUser,
-                                mLatestVisibleDocumentFriends
-                            )
-                        }
-                    }
+            mFriendsAdapter = FriendsAdapter(this, friends)
+            mFriendsAdapter!!.setOnClickListener(object : FriendsAdapter.OnClickListener {
+                override fun onClick(position: Int, friend: User) {
+                    val intent = Intent(this@FriendsActivity, PrivateChatActivity::class.java)
+                    intent.putExtra(Constants.Intent.USER_DATA, mUser)
+                    intent.putExtra(Constants.Intent.FRIEND, friend)
+                    startActivity(intent)
                 }
 
-                // Set up swipe handlers
-                val deleteFriendSwipeHandler = object : SwipeToDeleteCallback(this) {
-                    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                        val position: Int = viewHolder.adapterPosition
-                        mUserFriendPosition = position
+            })
+            binding.rvFriends.layoutManager = LinearLayoutManager(this)
+            binding.rvFriends.adapter = mFriendsAdapter
 
-                        val deleteDialog = AlertDialog.Builder(this@FriendsActivity)
-                        deleteDialog.setIcon(R.drawable.ic_delete_red_24dp)
-                        deleteDialog.setTitle(R.string.delete_friend)
-                        deleteDialog.setPositiveButton(getString(R.string.yes)) { dialog, which ->
-                            mFriendsAdapter!!.removeAt(
-                                this@FriendsActivity,
-                                mUser,
-                                position
-                            )
-                            mFriendsAdapter!!.notifyItemChanged(viewHolder.adapterPosition) // To always remove red banner
-                            dialog.dismiss()
-                            showProgressDialog()
-                        }
-                        deleteDialog.setNegativeButton(getString(R.string.no)) { dialog, _ ->
-                            mFriendsAdapter!!.notifyItemChanged(viewHolder.adapterPosition) // To remove red banner
-                            dialog.dismiss()
-                        }
-                        deleteDialog.show()
+            // Set up swipe handlers
+            val deleteFriendSwipeHandler = object : SwipeToDeleteCallback(this) {
+                override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                    val position: Int = viewHolder.adapterPosition
+                    mUserFriendPosition = position
+
+                    val deleteDialog = AlertDialog.Builder(this@FriendsActivity)
+                    deleteDialog.setIcon(R.drawable.ic_delete_red_24dp)
+                    deleteDialog.setTitle(R.string.delete_friend)
+                    deleteDialog.setPositiveButton(getString(R.string.yes)) { dialog, which ->
+                        mFriendsAdapter!!.removeAt(
+                            this@FriendsActivity,
+                            mUser,
+                            position
+                        )
+                        mFriendsAdapter!!.notifyItemChanged(viewHolder.adapterPosition) // To always remove red banner
+                        dialog.dismiss()
+                        showProgressDialog()
                     }
+                    deleteDialog.setNegativeButton(getString(R.string.no)) { dialog, _ ->
+                        mFriendsAdapter!!.notifyItemChanged(viewHolder.adapterPosition) // To remove red banner
+                        dialog.dismiss()
+                    }
+                    deleteDialog.show()
                 }
-
-                val deleteItemTouchHelper = ItemTouchHelper(deleteFriendSwipeHandler)
-                deleteItemTouchHelper.attachToRecyclerView(binding.rvFriends)
-            } else {
-                mFriendsAdapter!!.items.addAll(friends)
-                mFriendsAdapter!!.notifyDataSetChanged()
             }
+
+            val deleteItemTouchHelper = ItemTouchHelper(deleteFriendSwipeHandler)
+            deleteItemTouchHelper.attachToRecyclerView(binding.rvFriends)
         }
     }
 

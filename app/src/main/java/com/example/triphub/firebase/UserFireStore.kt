@@ -157,60 +157,38 @@ class UserFireStore : FireStoreBaseClass() {
             }
     }
 
-    fun loadUsersFromFriendRequests(
-        activity: FriendsActivity,
-        user: User,
-        latestVisibleDocument: DocumentSnapshot?
-    ) {
-        var query = mFireStore.collection(Constants.Models.User.USERS)
+    fun loadUsersFromFriendRequests(activity: FriendsActivity, user: User) {
+        val query = mFireStore.collection(Constants.Models.User.USERS)
             .whereIn(Constants.Models.User.ID, user.friendRequests)
             .orderBy(Constants.Models.User.NAME, Query.Direction.DESCENDING)
-        if (latestVisibleDocument != null) {
-            query = query.startAfter(latestVisibleDocument.toObject(User::class.java)!!.name)
-        }
         query.limit(Constants.Models.User.LOAD_LIMIT)
             .get()
             .addOnSuccessListener { documentSnapshots ->
-                var latestDocument: DocumentSnapshot? = null
-                if (documentSnapshots.size() > 0) {
-                    latestDocument = documentSnapshots.documents[documentSnapshots.size() - 1]
-                }
                 val friendRequestsUsers: ArrayList<User> = arrayListOf()
                 documentSnapshots.forEach {
                     val friendRequestUser = it.toObject(User::class.java)
                     friendRequestsUsers.add(friendRequestUser)
                 }
-                activity.onUsersFromFriendRequestsLoadSuccess(latestDocument, friendRequestsUsers)
+                activity.onUsersFromFriendRequestsLoadSuccess(friendRequestsUsers)
             }
             .addOnFailureListener {
                 activity.onUsersFromFriendRequestsLoadFailure()
             }
     }
 
-    fun loadFriends(
-        activity: FriendsActivity,
-        user: User,
-        latestVisibleDocument: DocumentSnapshot?
-    ) {
-        var query = mFireStore.collection(Constants.Models.User.USERS)
+    fun loadFriends(activity: FriendsActivity, user: User) {
+        val query = mFireStore.collection(Constants.Models.User.USERS)
             .whereIn(Constants.Models.User.ID, user.friendIds)
             .orderBy(Constants.Models.User.NAME, Query.Direction.DESCENDING)
-        if (latestVisibleDocument != null) {
-            query = query.startAfter(latestVisibleDocument.toObject(User::class.java)!!.name)
-        }
         query.limit(Constants.Models.User.LOAD_LIMIT)
             .get()
             .addOnSuccessListener { documentSnapshots ->
-                var latestDocument: DocumentSnapshot? = null
-                if (documentSnapshots.size() > 0) {
-                    latestDocument = documentSnapshots.documents[documentSnapshots.size() - 1]
-                }
                 val friends: ArrayList<User> = arrayListOf()
                 documentSnapshots.forEach {
                     val friend = it.toObject(User::class.java)
                     friends.add(friend)
                 }
-                activity.onFriendsLoadSuccess(latestDocument, friends)
+                activity.onFriendsLoadSuccess(friends)
             }
             .addOnFailureListener {
                 activity.onFriendsLoadFailure()
