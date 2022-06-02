@@ -40,9 +40,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(),
 
     var userData: User? = null
     private val myTrips: ArrayList<MyTrip> = ArrayList()
-    private var latestVisibleDocument: DocumentSnapshot? = null
 
-    private var mIsFirstTripsLoad: Boolean = true
     private lateinit var mTripsAdapter: MyTripsAdapter
 
     private lateinit var mPrivateChatAdapter: PrivateChatAdapter
@@ -58,9 +56,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(),
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 myTrips.clear()
-                mIsFirstTripsLoad = true
-                latestVisibleDocument = null
-                MyTripFireStore().loadMyTripsList(this, latestVisibleDocument)
+                MyTripFireStore().loadMyTripsList(this)
                 Log.i("Main", "Everything fine")
             }
         }
@@ -82,7 +78,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(),
         setUpOnClickListeners()
 
         UserFireStore().loadUserData(this@MainActivity)
-        MyTripFireStore().loadMyTripsList(this@MainActivity, latestVisibleDocument)
+        MyTripFireStore().loadMyTripsList(this@MainActivity)
     }
 
     private fun setUpOnClickListeners() {
@@ -159,15 +155,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>(),
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun onMyTripsListLoadSuccess(
-        latestDocument: DocumentSnapshot?,
-        myTripsList: ArrayList<MyTrip>
-    ) {
-        latestVisibleDocument = latestDocument
+    fun onMyTripsListLoadSuccess(myTripsList: ArrayList<MyTrip>) {
         myTrips.addAll(myTripsList)
         if (myTrips.isNotEmpty()) {
-            if (mIsFirstTripsLoad) {
-                mIsFirstTripsLoad = false
                 binding.appBarMain.mainContent.tvNoTrips.visibility = View.GONE
                 binding.appBarMain.mainContent.rvTrips.visibility = View.VISIBLE
                 binding.appBarMain.mainContent.rvTrips.layoutManager = LinearLayoutManager(this)
@@ -180,15 +170,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(),
                         startActivity(intent)
                     }
                 })
-
-                binding.appBarMain.mainContent.rvTrips.setOnScrollChangeListener { view, scrollX, scrollY, oldScrollX, oldScrollY ->
-                    val layoutManager =
-                        ((view as RecyclerView).layoutManager as LinearLayoutManager)
-                    if (layoutManager.findLastCompletelyVisibleItemPosition() == myTrips.size - 1) {
-                        Log.i("Main", "Loading more trips")
-                        MyTripFireStore().loadMyTripsList(this@MainActivity, latestVisibleDocument)
-                    }
-                }
 
                 val editSwipeHandler = object : SwipeToEditCallback(this) {
                     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
@@ -221,13 +202,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(),
 
                 val deleteItemTouchHelper = ItemTouchHelper(deleteSwipeHandler)
                 deleteItemTouchHelper.attachToRecyclerView(binding.appBarMain.mainContent.rvTrips)
-
-            } else {
-                Log.i("notify", "notify")
-                myTrips.addAll(myTripsList)
-                mTripsAdapter.addItems(myTripsList)
-                mTripsAdapter.notifyDataSetChanged()
-            }
         } else {
             binding.appBarMain.mainContent.tvNoTrips.visibility = View.VISIBLE
             binding.appBarMain.mainContent.rvTrips.visibility = View.GONE

@@ -66,10 +66,6 @@ class MyTripsAdapter(private val context: Context, var items: MutableList<MyTrip
         this.onClickListener = onClickListener
     }
 
-    fun addItems(myTrips: ArrayList<MyTrip>) {
-        items.addAll(myTrips)
-    }
-
     fun notifyEditItem(activity: MainActivity, position: Int) {
         val intent = Intent(context, AddTripActivity::class.java)
         intent.putExtra(Constants.Intent.TRIP, items[position])

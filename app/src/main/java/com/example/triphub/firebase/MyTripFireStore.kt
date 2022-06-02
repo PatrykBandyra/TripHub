@@ -61,21 +61,13 @@ class MyTripFireStore : FireStoreBaseClass() {
             }
     }
 
-    fun loadMyTripsList(activity: MainActivity, latestVisibleDocument: DocumentSnapshot?) {
+    fun loadMyTripsList(activity: MainActivity) {
         var query = mFireStore.collection(Constants.Models.MyTrip.MY_TRIPS)
             .whereArrayContains(Constants.Models.MyTrip.USER_IDS, getCurrentUserId())
             .orderBy(Constants.Models.MyTrip.CREATED_AT, Query.Direction.DESCENDING)
-        if (latestVisibleDocument != null) {
-            query = query.startAfter(latestVisibleDocument.toObject(MyTrip::class.java)!!.createdAt)
-        }
         query.limit(Constants.Models.MyTrip.LOAD_LIMIT)
             .get()
             .addOnSuccessListener { documentSnapshots ->
-                var latestDocument: DocumentSnapshot? = null
-                if (documentSnapshots.size() > 0) {
-                    latestDocument = documentSnapshots.documents[documentSnapshots.size() - 1]
-                }
-                Log.i("Latest Document", latestDocument.toString())
                 val myTripsList: ArrayList<MyTrip> = ArrayList()
                 documentSnapshots.forEach {
                     val myTrip = it.toObject(MyTrip::class.java)
@@ -83,7 +75,7 @@ class MyTripFireStore : FireStoreBaseClass() {
                     myTripsList.add(myTrip)
                     Log.i("Loaded Trip", myTrip.toString())
                 }
-                activity.onMyTripsListLoadSuccess(latestDocument, myTripsList)
+                activity.onMyTripsListLoadSuccess(myTripsList)
             }
             .addOnFailureListener {
                 activity.onMyTripsListLoadFailure()
