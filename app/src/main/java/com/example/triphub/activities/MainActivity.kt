@@ -148,8 +148,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(),
 
         navHeaderMenuBinding.tvUsername.text = user.name
         navHeaderMenuBinding.tvEmail.text = user.email
-
-        UserFireStore().getFriends(this, user)
     }
 
     fun onLoadUserDataFailure() {
