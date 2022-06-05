@@ -21,7 +21,6 @@ import com.example.triphub.models.User
 import com.example.triphub.utils.Constants
 import com.example.triphub.utils.SwipeToDeleteCallback
 import com.example.triphub.utils.SwipeToEditCallback
-import com.google.firebase.firestore.DocumentSnapshot
 
 class FriendsActivity : BaseActivity<ActivityFriendsBinding>() {
 
@@ -248,6 +247,14 @@ class FriendsActivity : BaseActivity<ActivityFriendsBinding>() {
 
             })
             binding.rvFriends.layoutManager = LinearLayoutManager(this)
+            mFriendsAdapter!!.setOnClickListener(object : FriendsAdapter.OnClickListener {
+                override fun onClick(position: Int, friend: User) {
+                    val intent = Intent(this@FriendsActivity, PrivateChatActivity::class.java)
+                    intent.putExtra(Constants.Intent.USER_DATA, mUser)
+                    intent.putExtra(Constants.Intent.FRIEND, friend)
+                    startActivity(intent)
+                }
+            })
             binding.rvFriends.adapter = mFriendsAdapter
 
             // Set up swipe handlers

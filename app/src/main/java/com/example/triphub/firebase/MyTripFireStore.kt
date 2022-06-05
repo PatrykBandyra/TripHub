@@ -62,7 +62,7 @@ class MyTripFireStore : FireStoreBaseClass() {
     }
 
     fun loadMyTripsList(activity: MainActivity) {
-        var query = mFireStore.collection(Constants.Models.MyTrip.MY_TRIPS)
+        val query = mFireStore.collection(Constants.Models.MyTrip.MY_TRIPS)
             .whereArrayContains(Constants.Models.MyTrip.USER_IDS, getCurrentUserId())
             .orderBy(Constants.Models.MyTrip.CREATED_AT, Query.Direction.DESCENDING)
         query.limit(Constants.Models.MyTrip.LOAD_LIMIT)

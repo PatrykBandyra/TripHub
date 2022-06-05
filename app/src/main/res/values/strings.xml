@@ -142,6 +142,7 @@
     <string name="could_not_remove_friend">Could not remove friend</string>
     <string name="could_not_load_friends">Could not load friends</string>
     <string name="could_not_load_private_chat">Could not load private conversations</string>
+    <string name="empty" />
     <!--  !Trip Screen  -->
 
 </resources>

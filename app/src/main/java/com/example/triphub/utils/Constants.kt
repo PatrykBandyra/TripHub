@@ -28,6 +28,14 @@ object Constants {
             const val CREATED_AT: String = "createdAt"
             const val LOAD_LIMIT: Long = 8
         }
+
+        object ChatMessage {
+            const val CHAT_MESSAGES: String = "ChatMessages"
+            const val SENDER_ID: String = "senderId"
+            const val RECEIVER_ID: String = "receiverId"
+            const val MESSAGE: String = "message"
+            const val TIMESTAMP: String = "timestamp"
+        }
     }
 
     object Intent {
