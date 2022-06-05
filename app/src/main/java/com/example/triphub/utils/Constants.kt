@@ -25,6 +25,7 @@ object Constants {
             const val POLYLINES: String = "polylines"
             const val POLYGONS: String = "polygons"
             const val CIRCLES: String = "circles"
+            const val TASK_LIST: String = "taskList"
             const val CREATED_AT: String = "createdAt"
             const val LOAD_LIMIT: Long = 8
         }

@@ -15,6 +15,7 @@ data class MyTrip(
     val polylines: ArrayList<MyPolyline> = ArrayList(),
     val polygons: ArrayList<MyPolygon> = ArrayList(),
     val circles: ArrayList<MyCircle> = ArrayList(),
+    val taskList: ArrayList<MyTask> = ArrayList(),
     val createdAt: Long = 0L
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
@@ -29,6 +30,7 @@ data class MyTrip(
         parcel.createTypedArrayList(MyPolyline.CREATOR)!!,
         parcel.createTypedArrayList(MyPolygon.CREATOR)!!,
         parcel.createTypedArrayList(MyCircle.CREATOR)!!,
+        parcel.createTypedArrayList(MyTask.CREATOR)!!,
         parcel.readLong()
     )
 
@@ -44,6 +46,7 @@ data class MyTrip(
         parcel.writeTypedList(polylines)
         parcel.writeTypedList(polygons)
         parcel.writeTypedList(circles)
+        parcel.writeTypedList(taskList)
         parcel.writeLong(createdAt)
     }
 

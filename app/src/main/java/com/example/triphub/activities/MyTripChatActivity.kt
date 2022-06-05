@@ -96,17 +96,26 @@ class MyTripChatActivity : BaseActivity<ActivityMyTripChatBinding>() {
 
     private fun setUpTaskBarNavigation() {
         binding.ivPeople.setOnClickListener {
-            startActivity(Intent(this, MyTripPeopleActivity::class.java))
+            val intent = Intent(this, MyTripPeopleActivity::class.java)
+            intent.putExtra(Constants.Intent.USER_DATA, mUser)
+            intent.putExtra(Constants.Intent.TRIP, mTrip)
+            startActivity(intent)
             overridePendingTransition(0, 0)
             finish()
         }
         binding.ivMap.setOnClickListener {
-            startActivity(Intent(this, MyTripMapActivity::class.java))
+            val intent = Intent(this, MyTripMapActivity::class.java)
+            intent.putExtra(Constants.Intent.USER_DATA, mUser)
+            intent.putExtra(Constants.Intent.TRIP, mTrip)
+            startActivity(intent)
             overridePendingTransition(0, 0)
             finish()
         }
         binding.ivBoard.setOnClickListener {
-            startActivity(Intent(this, MyTripBoardActivity::class.java))
+            val intent = Intent(this, MyTripBoardActivity::class.java)
+            intent.putExtra(Constants.Intent.USER_DATA, mUser)
+            intent.putExtra(Constants.Intent.TRIP, mTrip)
+            startActivity(intent)
             overridePendingTransition(0, 0)
             finish()
         }
