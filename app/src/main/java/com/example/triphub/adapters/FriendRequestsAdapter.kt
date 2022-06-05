@@ -59,21 +59,12 @@ class FriendRequestsAdapter(private val context: Context, var items: MutableList
     }
 
     fun notifyAcceptFriendRequest(activity: FriendsActivity, user: User, position: Int) {
-        val userFriendRequestId: String = items[position].id
+        val userFriend: User = items[position]
 
-        val userHashMap: HashMap<String, Any> = hashMapOf()
-        user.friendRequests.remove(userFriendRequestId)
-        userHashMap[Constants.Models.User.FRIEND_REQUESTS] = user.friendRequests
-        user.friendIds.add(userFriendRequestId)
-        userHashMap[Constants.Models.User.FRIEND_IDS] = user.friendIds
+        user.friendRequests.remove(userFriend.id)
+        user.friendIds.add(userFriend.id)
+        userFriend.friendIds.add(user.id)
 
-        UserFireStore().updateUser(
-            activity,
-            user.id,
-            userHashMap,
-            isFromAdapter = true,
-            isAddition = true,
-            isFriendRequest = true
-        )
+        UserFireStore().addFriend(activity, user, userFriend)
     }
 }

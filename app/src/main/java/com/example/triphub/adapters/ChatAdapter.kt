@@ -1,6 +1,7 @@
 package com.example.triphub.adapters
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -15,7 +16,7 @@ import java.util.*
 
 class ChatAdapter(
     private val context: Context,
-    val messages: ArrayList<ChatMessage>,
+    val messages: MutableList<ChatMessage>,
     private val receiverUser: User,
     private val user: User
 ) :

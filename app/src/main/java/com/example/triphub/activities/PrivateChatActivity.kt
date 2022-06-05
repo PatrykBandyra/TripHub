@@ -24,8 +24,6 @@ class PrivateChatActivity : BaseActivity<ActivityPrivateChatBinding>() {
     private lateinit var mFriend: User
     private lateinit var mChatAdapter: ChatAdapter
 
-    private var mChatMessages: ArrayList<ChatMessage> = arrayListOf()
-
     @SuppressLint("NotifyDataSetChanged")
     private val eventListener: EventListener<QuerySnapshot> =
         EventListener<QuerySnapshot> { value, error ->
@@ -33,7 +31,7 @@ class PrivateChatActivity : BaseActivity<ActivityPrivateChatBinding>() {
                 return@EventListener
             }
             if (value != null) {
-                val count: Int = mChatMessages.size
+                val count: Int = mChatAdapter.messages.size
                 for (documentChange: DocumentChange in value.documentChanges) {
                     if (documentChange.type == DocumentChange.Type.ADDED) {
                         val chatMessage = ChatMessage(
@@ -43,17 +41,17 @@ class PrivateChatActivity : BaseActivity<ActivityPrivateChatBinding>() {
                             timestamp = documentChange.document.getLong(Constants.Models.ChatMessage.TIMESTAMP)!!
                         )
                         Log.i("CHAT", chatMessage.toString())
-                        mChatMessages.add(chatMessage)
+                        mChatAdapter.messages.add(chatMessage)
                     }
                 }
-                mChatMessages.sortWith(Comparator { obj1, obj2 ->
+                mChatAdapter.messages.sortWith(Comparator { obj1, obj2 ->
                     obj1.timestamp.compareTo(obj2.timestamp)
                 })
                 if (count == 0) {
                     mChatAdapter.notifyDataSetChanged()
                 } else {
-                    mChatAdapter.notifyItemRangeInserted(mChatMessages.size, mChatMessages.size)
-                    binding.rvChat.smoothScrollToPosition(mChatMessages.size - 1)
+                    mChatAdapter.notifyItemRangeInserted(count, mChatAdapter.messages.size)
+                    binding.rvChat.smoothScrollToPosition(mChatAdapter.messages.size - 1)
                 }
             }
         }
@@ -62,7 +60,7 @@ class PrivateChatActivity : BaseActivity<ActivityPrivateChatBinding>() {
         super.onCreate(savedInstanceState)
         setUpActionBarForReturnAction(binding.toolbar, title = R.string.empty)
         loadIntentData()
-        mChatAdapter = ChatAdapter(this, mChatMessages, mFriend, mUser)
+        mChatAdapter = ChatAdapter(this@PrivateChatActivity, arrayListOf(), mFriend, mUser)
         binding.rvChat.adapter = mChatAdapter
         binding.rvChat.layoutManager = LinearLayoutManager(this)
 

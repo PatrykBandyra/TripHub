@@ -7,10 +7,8 @@ import com.example.triphub.R
 import com.example.triphub.activities.*
 import com.example.triphub.models.User
 import com.example.triphub.utils.Constants
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
-import com.google.firebase.firestore.ktx.toObject
 
 class UserFireStore : FireStoreBaseClass() {
 
@@ -195,26 +193,23 @@ class UserFireStore : FireStoreBaseClass() {
             }
     }
 
-    fun getFriends(activity: Activity, user: User) {
+    fun addFriend(activity: FriendsActivity, user: User, userFriend: User) {
+        val userHashMap: HashMap<String, Any> = hashMapOf()
+        userHashMap[Constants.Models.User.FRIEND_IDS] = user.friendIds
+        userHashMap[Constants.Models.User.FRIEND_REQUESTS] = user.friendRequests
+        val userFriendHashMap: HashMap<String, Any> = hashMapOf()
+        userFriendHashMap[Constants.Models.User.FRIEND_IDS] = userFriend.friendIds
         mFireStore.collection(Constants.Models.User.USERS)
-            .whereIn(Constants.Models.User.ID, user.friendIds)
-            .orderBy(Constants.Models.User.NAME, Query.Direction.DESCENDING)
-            .get()
-            .addOnSuccessListener { documentSnapshots ->
-                val friends: ArrayList<User> = arrayListOf()
-                documentSnapshots.forEach {
-                    val friend = it.toObject(User::class.java)
-                    friends.add(friend)
-                }
-                when (activity) {
-                    is MainActivity -> activity.onGetFriendsSuccess(friends)
-                }
+            .document(user.id)
+            .update(userHashMap)
+            .addOnSuccessListener {
+                activity.onFriendAdded()
             }
             .addOnFailureListener {
-                when (activity) {
-                    is MainActivity -> activity.onGetFriendsFailure()
-                }
+                activity.showErrorSnackBar(R.string.could_not_add_new_friend)
             }
+        mFireStore.collection(Constants.Models.User.USERS)
+            .document(userFriend.id)
+            .update(userFriendHashMap)
     }
-
 }
