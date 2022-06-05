@@ -36,6 +36,15 @@ object Constants {
             const val MESSAGE: String = "message"
             const val TIMESTAMP: String = "timestamp"
         }
+
+        object MyTripChatMessage {
+            const val CHAT_MESSAGES: String = "MyTripChatMessages"
+            const val MY_TRIP_ID: String = "tripId"
+            const val SENDER_ID: String = "senderId"
+            const val RECEIVER_IDS: String = "receiverIds"
+            const val MESSAGE: String = "message"
+            const val TIMESTAMP: String = "timestamp"
+        }
     }
 
     object Intent {

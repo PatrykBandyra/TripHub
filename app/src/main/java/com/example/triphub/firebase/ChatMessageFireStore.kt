@@ -1,6 +1,7 @@
 package com.example.triphub.firebase
 
 import com.example.triphub.models.ChatMessage
+import com.example.triphub.models.MyTripChatMessage
 import com.example.triphub.models.User
 import com.example.triphub.utils.Constants
 import com.google.firebase.firestore.EventListener
@@ -21,6 +22,17 @@ class ChatMessageFireStore : FireStoreBaseClass() {
         mFireStore.collection(Constants.Models.ChatMessage.CHAT_MESSAGES)
             .whereEqualTo(Constants.Models.ChatMessage.SENDER_ID, user2.id)
             .whereEqualTo(Constants.Models.ChatMessage.RECEIVER_ID, user1.id)
+            .addSnapshotListener(eventListener)
+    }
+
+    fun sendMyTripMessage(message: MyTripChatMessage) {
+        mFireStore.collection(Constants.Models.MyTripChatMessage.CHAT_MESSAGES)
+            .add(message)
+    }
+
+    fun listenForMyTripMessages(tripId: String, eventListener: EventListener<QuerySnapshot>) {
+        mFireStore.collection(Constants.Models.MyTripChatMessage.CHAT_MESSAGES)
+            .whereEqualTo(Constants.Models.MyTripChatMessage.MY_TRIP_ID, tripId)
             .addSnapshotListener(eventListener)
     }
 }

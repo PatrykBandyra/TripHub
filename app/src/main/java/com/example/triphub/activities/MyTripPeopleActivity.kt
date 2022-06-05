@@ -25,6 +25,7 @@ import com.example.triphub.utils.SwipeToDeleteCallback
 class MyTripPeopleActivity : BaseActivity<ActivityMyTripPeopleBinding>() {
 
     private lateinit var mTrip: MyTrip
+    private lateinit var mUser: User
     private lateinit var mAdapter: MyTripPeopleAdapter
     private var isCreator: Boolean = false
 
@@ -35,6 +36,12 @@ class MyTripPeopleActivity : BaseActivity<ActivityMyTripPeopleBinding>() {
             mTrip = intent.getParcelableExtra(Constants.Intent.TRIP)!!
         } else {
             throw Exception("${this::class.java.simpleName}: No MyTrip object provided")
+        }
+
+        if (intent.hasExtra(Constants.Intent.USER_DATA)) {
+            mUser = intent.getParcelableExtra(Constants.Intent.USER_DATA)!!
+        } else {
+            throw Exception("${this::class.java.simpleName}: No User object provided")
         }
 
         setUpTaskBarNavigation()
@@ -68,17 +75,27 @@ class MyTripPeopleActivity : BaseActivity<ActivityMyTripPeopleBinding>() {
 
     private fun setUpTaskBarNavigation() {
         binding.ivBoard.setOnClickListener {
-            startActivity(Intent(this, MyTripBoardActivity::class.java))
+            val intent = Intent(this, MyTripBoardActivity::class.java)
+            intent.putExtra(Constants.Intent.TRIP, mTrip)
+            intent.putExtra(Constants.Intent.USER_DATA, mUser)
+            startActivity(intent)
             overridePendingTransition(0, 0)
             finish()
         }
         binding.ivMap.setOnClickListener {
-            startActivity(Intent(this, MyTripMapActivity::class.java))
+            val intent = Intent(this, MyTripMapActivity::class.java)
+            intent.putExtra(Constants.Intent.TRIP, mTrip)
+            intent.putExtra(Constants.Intent.USER_DATA, mUser)
+            startActivity(intent)
             overridePendingTransition(0, 0)
             finish()
         }
         binding.ivChat.setOnClickListener {
-            startActivity(Intent(this, MyTripChatActivity::class.java))
+            val intent = Intent(this, MyTripChatActivity::class.java)
+            intent.putExtra(Constants.Intent.TRIP, mTrip)
+            intent.putExtra(Constants.Intent.USER_DATA, mUser)
+            startActivity(intent)
+            startActivity(intent)
             overridePendingTransition(0, 0)
             finish()
         }

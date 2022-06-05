@@ -143,6 +143,7 @@
     <string name="could_not_load_friends">Could not load friends</string>
     <string name="could_not_load_private_chat">Could not load private conversations</string>
     <string name="empty" />
+    <string name="could_not_load_chat">Could not load chat</string>
     <!--  !Trip Screen  -->
 
 </resources>

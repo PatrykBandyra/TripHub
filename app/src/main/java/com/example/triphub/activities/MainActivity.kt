@@ -167,6 +167,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(),
                     override fun onClick(position: Int, myTrip: MyTrip) {
                         val intent = Intent(this@MainActivity, MyTripPeopleActivity::class.java)
                         intent.putExtra(Constants.Intent.TRIP, myTrip)
+                        intent.putExtra(Constants.Intent.USER_DATA, userData)
                         startActivity(intent)
                     }
                 })

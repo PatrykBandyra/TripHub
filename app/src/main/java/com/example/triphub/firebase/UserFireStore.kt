@@ -178,7 +178,7 @@ class UserFireStore : FireStoreBaseClass() {
         val query = mFireStore.collection(Constants.Models.User.USERS)
             .whereIn(Constants.Models.User.ID, user.friendIds)
             .orderBy(Constants.Models.User.NAME, Query.Direction.DESCENDING)
-        query.limit(Constants.Models.User.LOAD_LIMIT)
+        query
             .get()
             .addOnSuccessListener { documentSnapshots ->
                 val friends: ArrayList<User> = arrayListOf()
@@ -211,5 +211,24 @@ class UserFireStore : FireStoreBaseClass() {
         mFireStore.collection(Constants.Models.User.USERS)
             .document(userFriend.id)
             .update(userFriendHashMap)
+    }
+
+    fun getUsersByIds(activity: MyTripChatActivity, userIDs: ArrayList<String>) {
+        val query = mFireStore.collection(Constants.Models.User.USERS)
+            .whereIn(Constants.Models.User.ID, userIDs)
+            .orderBy(Constants.Models.User.NAME, Query.Direction.DESCENDING)
+        query
+            .get()
+            .addOnSuccessListener { documentSnapshots ->
+                val users: ArrayList<User> = arrayListOf()
+                documentSnapshots.forEach {
+                    val user = it.toObject(User::class.java)
+                    users.add(user)
+                }
+                activity.onUsersLoadSuccess(users)
+            }
+            .addOnFailureListener {
+                activity.onUsersLoadFailure()
+            }
     }
 }
