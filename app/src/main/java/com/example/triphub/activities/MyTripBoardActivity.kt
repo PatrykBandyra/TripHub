@@ -51,6 +51,7 @@ class MyTripBoardActivity : BaseActivity<ActivityMyTripBoardBinding>() {
         }
 
         setUpTaskBarNavigation()
+        MyTripFireStore().getMyTrip(this, mTrip.documentId)
     }
 
     private fun setUpTaskBarNavigation() {

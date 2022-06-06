@@ -176,7 +176,7 @@ class MyTripFireStore : FireStoreBaseClass() {
         val taskListHashMap = HashMap<String, Any>()
         taskListHashMap[Constants.Models.MyTrip.TASK_LIST] = myTrip.taskList
 
-        mFireStore.collection(Constants.Models.MyTrip.TASK_LIST)
+        mFireStore.collection(Constants.Models.MyTrip.MY_TRIPS)
             .document(myTrip.documentId)
             .update(taskListHashMap)
             .addOnSuccessListener {
@@ -190,7 +190,7 @@ class MyTripFireStore : FireStoreBaseClass() {
                 if (activity is BaseActivity<*>) {
                     activity.hideProgressDialog()
                 }
-                Log.e(activity.javaClass.simpleName, "Error while updating a taskList", exception)
+                Log.e("HERE", "Error while updating a taskList", exception)
             }
     }
 
