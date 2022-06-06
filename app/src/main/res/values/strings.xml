@@ -144,6 +144,14 @@
     <string name="could_not_load_private_chat">Could not load private conversations</string>
     <string name="empty" />
     <string name="could_not_load_chat">Could not load chat</string>
+    <string name="action_add_list">Add List</string>
+    <string name="hint_list_name">List Name</string>
+    <string name="action_add_card">Add Card</string>
+    <string name="str_select_label_color">Select Label Color</string>
+    <string name="str_select_member">Select Member</string>
+    <string name="delete_card">Delete Card</string>
+    <string name="alert">Alert</string>
+    <string name="confirmation_message_to_delete_card">Are you sure you want to delete card \'%1$s\'?</string>
     <!--  !Trip Screen  -->
 
 </resources>

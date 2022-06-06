@@ -1,19 +1,15 @@
 package com.example.triphub.firebase
 
+import android.app.Activity
 import android.util.Log
 import com.example.triphub.R
-import com.example.triphub.activities.AddTripActivity
-import com.example.triphub.activities.BaseActivity
-import com.example.triphub.activities.MainActivity
-import com.example.triphub.activities.MyTripPeopleActivity
+import com.example.triphub.activities.*
 import com.example.triphub.adapters.MyTripsAdapter
 import com.example.triphub.models.MyTrip
 import com.example.triphub.models.User
 import com.example.triphub.utils.Constants
 import com.google.firebase.firestore.*
 import com.google.firebase.firestore.ktx.toObject
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
 
 class MyTripFireStore : FireStoreBaseClass() {
 
@@ -48,16 +44,32 @@ class MyTripFireStore : FireStoreBaseClass() {
             }
     }
 
-    fun getMyTrip(activity: MyTripPeopleActivity, tripId: String) {
+    fun getMyTrip(activity: Activity, tripId: String) {
         mFireStore.collection(Constants.Models.MyTrip.MY_TRIPS)
             .document(tripId)
             .get()
             .addOnSuccessListener { document ->
-                val myTrip: MyTrip = document.toObject()!!
-                activity.onGetMyTripSuccess(myTrip)
+                when (activity) {
+                    is MyTripPeopleActivity -> {
+                        val myTrip: MyTrip = document.toObject()!!
+                        activity.onGetMyTripSuccess(myTrip)
+
+                    }
+                    is MyTripBoardActivity -> {
+                        val myTrip: MyTrip = document.toObject()!!
+                        activity.onGetMyTripSuccess(myTrip)
+                    }
+                }
             }
             .addOnFailureListener {
-                activity.showErrorSnackBar(R.string.could_not_refresh_trip)
+                when (activity) {
+                    is MyTripPeopleActivity -> {
+                        activity.showErrorSnackBar(R.string.could_not_refresh_trip)
+                    }
+                    is MyTripBoardActivity -> {
+                        activity.showErrorSnackBar(R.string.could_not_refresh_trip)
+                    }
+                }
             }
     }
 
@@ -127,7 +139,7 @@ class MyTripFireStore : FireStoreBaseClass() {
 
     }
 
-    fun loadPeopleAssignedToTrip(activity: MyTripPeopleActivity, userIds: ArrayList<String>) {
+    fun loadPeopleAssignedToTrip(activity: Activity, userIds: ArrayList<String>) {
         mFireStore.collection(Constants.Models.User.USERS)
             .whereIn(Constants.Models.User.ID, userIds).get()
             .addOnSuccessListener { documents ->
@@ -137,11 +149,49 @@ class MyTripFireStore : FireStoreBaseClass() {
                         val user: User = document.toObject()
                         usersList.add(user)
                     }
-                    activity.onPeopleLoadedSuccess(usersList)
+                    when (activity) {
+                        is MyTripPeopleActivity -> {
+                            activity.onPeopleLoadedSuccess(usersList)
+                        }
+                        is MyTripBoardActivity -> {
+                            activity.onPeopleLoadedSuccess(usersList)
+                        }
+                    }
                 }
             }
             .addOnFailureListener { e ->
-                activity.onPeopleLoadedFailure()
+                when (activity) {
+                    is MyTripPeopleActivity -> {
+                        activity.onPeopleLoadedFailure()
+                    }
+                    is MyTripBoardActivity -> {
+                        activity.hideProgressDialog()
+                        activity.showErrorSnackBar(R.string.could_not_load_people_trip)
+                    }
+                }
             }
     }
+
+    fun addUpdateTaskList(activity: Activity, myTrip: MyTrip) {
+        val taskListHashMap = HashMap<String, Any>()
+        taskListHashMap[Constants.Models.MyTrip.TASK_LIST] = myTrip.taskList
+
+        mFireStore.collection(Constants.Models.MyTrip.TASK_LIST)
+            .document(myTrip.documentId)
+            .update(taskListHashMap)
+            .addOnSuccessListener {
+                if (activity is MyTripBoardActivity) {
+                    activity.addUpdateTaskListSuccess()
+                } else if (activity is MyTripCardDetailsActivity) {
+                    activity.addUpdateTaskListSuccess()
+                }
+            }
+            .addOnFailureListener { exception ->
+                if (activity is BaseActivity<*>) {
+                    activity.hideProgressDialog()
+                }
+                Log.e(activity.javaClass.simpleName, "Error while updating a taskList", exception)
+            }
+    }
+
 }

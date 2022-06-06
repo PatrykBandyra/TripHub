@@ -49,6 +49,10 @@ object Constants {
     }
 
     object Intent {
+        const val TRIP_MEMBERS_LIST: String = "tripMembersList"
+        const val CARD_LIST_ITEM_POSITION: String = "cardListItemPosition"
+        const val TASK_LIST_ITEM_POSITION: String = "taskListItemPosition"
+
         const val FRIEND: String = "friend"
         const val USER_DATA: String = "userData"
         const val ERROR: String = "error"
@@ -67,4 +71,7 @@ object Constants {
         const val POLYGON: String = "Polygon"
         const val CIRCLE: String = "Circle"
     }
+
+    const val SELECT: String = "select"
+    const val UNSELECT: String = "unselect"
 }
