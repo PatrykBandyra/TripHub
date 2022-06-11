@@ -152,6 +152,21 @@
     <string name="delete_card">Delete Card</string>
     <string name="alert">Alert</string>
     <string name="confirmation_message_to_delete_card">Are you sure you want to delete card \'%1$s\'?</string>
+    <string name="radius_in_meters">Radius in meters</string>
+    <string name="fill_color">Fill Color</string>
+    <string name="stroke_color">Stroke Color</string>
+    <string name="confirm">Confirm</string>
+    <string name="enter_circle_radius">Enter circle radius in meters</string>
+    <string name="select_circle_fill_color">Select circle fill color</string>
+    <string name="select_circle_stroke_color">Select circle stroke color</string>
+    <string name="remove">Remove</string>
+    <string name="line_color">Line Color</string>
+    <string name="solid">Solid</string>
+    <string name="dash">Dash</string>
+    <string name="dot">Dot</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="polygons_at_least_3_points">Polygons should have at least 3 points</string>
     <!--  !Trip Screen  -->
 
 </resources>

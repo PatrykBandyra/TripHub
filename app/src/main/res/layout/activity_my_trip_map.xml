@@ -107,7 +107,7 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/cvTools"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="220dp"
             android:background="@color/white"
             android:clickable="true"
             android:focusable="true"
@@ -117,6 +117,7 @@
             app:layout_constraintStart_toStartOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/clTools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:paddingStart="10dp"
@@ -145,6 +146,8 @@
                             android:id="@+id/actvMapInputType"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
+                            android:clickable="true"
+                            android:focusable="false"
                             android:hint="@string/map_input_type"
                             android:inputType="none"
                             android:text="@string/select"
@@ -172,10 +175,368 @@
                             android:layout_centerInParent="true"
                             android:layout_gravity="center"
                             android:gravity="center" />
+
+                        <RadioGroup
+                            android:id="@+id/radioGroup"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/switchMapMode"
+                            android:layout_centerHorizontal="true"
+                            android:layout_marginHorizontal="4dp"
+                            android:orientation="horizontal"
+                            android:padding="4dp">
+
+                            <RadioButton
+                                android:id="@+id/radioAdd"
+                                android:layout_width="80dp"
+                                android:layout_height="20dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/radio_selector"
+                                android:button="@android:color/transparent"
+                                android:checked="true"
+                                android:gravity="center"
+                                android:text="@string/add"
+                                android:textColor="@drawable/radio_selector_text_color" />
+
+                            <RadioButton
+                                android:id="@+id/radioRemove"
+                                android:layout_width="80dp"
+                                android:layout_height="20dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/radio_selector"
+                                android:button="@android:color/transparent"
+                                android:gravity="center"
+                                android:text="@string/remove"
+                                android:textColor="@drawable/radio_selector_text_color" />
+                        </RadioGroup>
                     </RelativeLayout>
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/llCircleType"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toTopOf="@+id/llFindPLace"
+                    tools:visibility="gone">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="2">
+
+                        <androidx.appcompat.widget.AppCompatEditText
+                            android:id="@+id/etCircleRadius"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/white"
+                            android:hint="@string/radius_in_meters"
+                            android:inputType="number"
+                            android:maxLength="6"
+                            android:textColor="@color/secondary_text_color"
+                            android:textSize="@dimen/et_text_size" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:text="@string/fill_color"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toTopOf="@id/ibFillColor"
+                            app:layout_constraintStart_toStartOf="parent" />
+
+                        <ImageButton
+                            android:id="@+id/ibFillColor"
+                            android:layout_width="50dp"
+                            android:layout_height="25dp"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="15dp"
+                            android:layout_marginTop="2dp"
+                            android:layout_marginEnd="2dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginBottom="5dp"
+                            android:background="@color/black"
+                            android:contentDescription="@string/image_content_description"
+                            android:src="@drawable/pallet_normal"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/stroke_color"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toTopOf="@id/ibStrokeColor"
+                            app:layout_constraintEnd_toEndOf="parent" />
+
+                        <ImageButton
+                            android:id="@+id/ibStrokeColor"
+                            android:layout_width="50dp"
+                            android:layout_height="25dp"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="2dp"
+                            android:layout_marginTop="2dp"
+                            android:layout_marginEnd="15dp"
+                            android:layout_marginBottom="5dp"
+                            android:background="@color/black"
+                            android:contentDescription="@string/image_content_description"
+                            android:src="@drawable/pallet_normal"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/llPolylineType"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toTopOf="@+id/llFindPLace"
+                    tools:visibility="gone">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingEnd="10dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:text="@string/line_color"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toTopOf="@id/ibPolylineColor"
+                            app:layout_constraintStart_toStartOf="parent" />
+
+                        <ImageButton
+                            android:id="@+id/ibPolylineColor"
+                            android:layout_width="50dp"
+                            android:layout_height="25dp"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="15dp"
+                            android:layout_marginTop="2dp"
+                            android:layout_marginEnd="2dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginBottom="5dp"
+                            android:background="@color/black"
+                            android:contentDescription="@string/image_content_description"
+                            android:src="@drawable/pallet_normal"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:paddingTop="10dp">
+
+                        <RadioGroup
+                            android:id="@+id/radioGroupPolylineType"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center|top"
+                            android:layout_marginHorizontal="2dp"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:padding="2dp">
+
+                            <RadioButton
+                                android:id="@+id/radioPolylineTypeSolid"
+                                android:layout_width="60dp"
+                                android:layout_height="40dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/radio_selector"
+                                android:button="@android:color/transparent"
+                                android:checked="true"
+                                android:gravity="center"
+                                android:text="@string/solid"
+                                android:textColor="@drawable/radio_selector_text_color" />
+
+                            <RadioButton
+                                android:id="@+id/radioPolylineTypeDash"
+                                android:layout_width="60dp"
+                                android:layout_height="40dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/radio_selector"
+                                android:button="@android:color/transparent"
+                                android:gravity="center"
+                                android:text="@string/dash"
+                                android:textColor="@drawable/radio_selector_text_color" />
+
+                            <RadioButton
+                                android:id="@+id/radioPolylineTypeDot"
+                                android:layout_width="60dp"
+                                android:layout_height="40dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/radio_selector"
+                                android:button="@android:color/transparent"
+                                android:gravity="center"
+                                android:text="@string/dot"
+                                android:textColor="@drawable/radio_selector_text_color" />
+                        </RadioGroup>
+
+                        <Button
+                            android:id="@+id/btnPolylineStartStop"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="10dp"
+                            android:layout_weight="1"
+                            android:text="@string/start" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/llPolygonType"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toTopOf="@+id/llFindPLace"
+                    tools:visibility="visible">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingEnd="4dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:text="@string/fill_color"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toTopOf="@id/ibPolygonFillColor"
+                            app:layout_constraintStart_toStartOf="parent" />
+
+                        <ImageButton
+                            android:id="@+id/ibPolygonFillColor"
+                            android:layout_width="50dp"
+                            android:layout_height="25dp"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="15dp"
+                            android:layout_marginTop="2dp"
+                            android:layout_marginEnd="2dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginBottom="5dp"
+                            android:background="@color/black"
+                            android:contentDescription="@string/image_content_description"
+                            android:src="@drawable/pallet_normal"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingEnd="4dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:text="@string/stroke_color"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toTopOf="@id/ibPolygonStrokeColor"
+                            app:layout_constraintStart_toStartOf="parent" />
+
+                        <ImageButton
+                            android:id="@+id/ibPolygonStrokeColor"
+                            android:layout_width="50dp"
+                            android:layout_height="25dp"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="15dp"
+                            android:layout_marginTop="2dp"
+                            android:layout_marginEnd="2dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginBottom="5dp"
+                            android:background="@color/black"
+                            android:contentDescription="@string/image_content_description"
+                            android:src="@drawable/pallet_normal"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:paddingTop="10dp">
+
+                        <RadioGroup
+                            android:id="@+id/radioGroupPolygonType"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center|top"
+                            android:layout_marginHorizontal="2dp"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:padding="2dp">
+
+                            <RadioButton
+                                android:id="@+id/radioPolygonTypeSolid"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/radio_selector"
+                                android:button="@android:color/transparent"
+                                android:checked="true"
+                                android:gravity="center"
+                                android:text="@string/solid"
+                                android:textColor="@drawable/radio_selector_text_color" />
+
+                            <RadioButton
+                                android:id="@+id/radioPolygonTypeDash"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/radio_selector"
+                                android:button="@android:color/transparent"
+                                android:gravity="center"
+                                android:text="@string/dash"
+                                android:textColor="@drawable/radio_selector_text_color" />
+
+                            <RadioButton
+                                android:id="@+id/radioPolygonTypeDot"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/radio_selector"
+                                android:button="@android:color/transparent"
+                                android:gravity="center"
+                                android:text="@string/dot"
+                                android:textColor="@drawable/radio_selector_text_color" />
+                        </RadioGroup>
+
+                        <Button
+                            android:id="@+id/btnPolygonStartStop"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="10dp"
+                            android:layout_weight="1"
+                            android:textSize="12sp"
+                            android:text="@string/start" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/llFindPLace"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"

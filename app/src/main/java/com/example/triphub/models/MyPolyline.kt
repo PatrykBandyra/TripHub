@@ -7,20 +7,17 @@ data class MyPolyline(
     val points: ArrayList<MyPoint> = ArrayList(),
     val color: String = "",
     val pattern: String = "",  // dot, dash, solid
-    val gap: Float = 0f
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.createTypedArrayList(MyPoint.CREATOR)!!,
         parcel.readString()!!,
-        parcel.readString()!!,
-        parcel.readFloat()
+        parcel.readString()!!
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeTypedList(points)
         parcel.writeString(color)
         parcel.writeString(pattern)
-        parcel.writeFloat(gap)
     }
 
     override fun describeContents(): Int {

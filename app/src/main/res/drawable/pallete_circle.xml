@@ -1,0 +1,22 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape>
+            <solid android:color="@color/primary" />
+        </shape>
+    </item>
+    <item android:start="125dp">
+        <shape>
+            <solid android:color="@color/secondary" />
+        </shape>
+    </item>
+    <item android:start="250dp">
+        <shape>
+            <solid android:color="@color/primaryVariant" />
+        </shape>
+    </item>
+    <item android:start="375dp">
+        <shape>
+            <solid android:color="@color/secondaryVariant" />
+        </shape>
+    </item>
+</layer-list>

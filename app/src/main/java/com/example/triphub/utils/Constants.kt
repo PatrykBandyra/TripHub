@@ -1,5 +1,7 @@
 package com.example.triphub.utils
 
+import android.graphics.Color
+
 object Constants {
 
     object Models {
@@ -74,4 +76,12 @@ object Constants {
 
     const val SELECT: String = "select"
     const val UNSELECT: String = "unselect"
+
+    object Map {
+        val CIRCLE_DEFAULT_FILL_COLOR: Int = Color.parseColor("#FF000000")
+        val CIRCLE_DEFAULT_STROKE_COLOR: Int = Color.parseColor("#FF000000")
+        val POLYLINE_DEFAULT_COLOR: Int = Color.parseColor("#FF000000")
+        val POLYGON_DEFAULT_FILL_COLOR: Int = Color.parseColor("#FF000000")
+        val POLYGON_DEFAULT_STROKE_COLOR: Int = Color.parseColor("#FF000000")
+    }
 }
