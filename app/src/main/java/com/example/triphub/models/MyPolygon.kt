@@ -5,28 +5,22 @@ import android.os.Parcelable
 
 data class MyPolygon(
     val points: ArrayList<MyPoint> = ArrayList(),
-    val fillColor: String = "",
-    val strokeColor: String = "",
+    val fillColor: Int = 0,
+    val strokeColor: Int = 0,
     val strokePattern: String = "",
-    val strokeGap: Float = 0f,
-    val holePoints: ArrayList<MyPoint> = ArrayList()
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.createTypedArrayList(MyPoint.CREATOR)!!,
+        parcel.readInt(),
+        parcel.readInt(),
         parcel.readString()!!,
-        parcel.readString()!!,
-        parcel.readString()!!,
-        parcel.readFloat(),
-        parcel.createTypedArrayList(MyPoint.CREATOR)!!
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeTypedList(points)
-        parcel.writeString(fillColor)
-        parcel.writeString(strokeColor)
+        parcel.writeInt(fillColor)
+        parcel.writeInt(strokeColor)
         parcel.writeString(strokePattern)
-        parcel.writeFloat(strokeGap)
-        parcel.writeTypedList(holePoints)
     }
 
     override fun describeContents(): Int {

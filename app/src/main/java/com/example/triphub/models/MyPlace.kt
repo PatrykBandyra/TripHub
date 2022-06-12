@@ -4,7 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 
 data class MyPlace(
-    val name: String = "",
+    val title: String = "",
     val snippet: String = "",
     val description: String = "",
     val images: ArrayList<String> = ArrayList(),
@@ -23,7 +23,7 @@ data class MyPlace(
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(name)
+        parcel.writeString(title)
         parcel.writeString(snippet)
         parcel.writeString(description)
         parcel.writeStringList(images)

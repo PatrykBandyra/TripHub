@@ -95,7 +95,6 @@ class MyTripPeopleActivity : BaseActivity<ActivityMyTripPeopleBinding>() {
             intent.putExtra(Constants.Intent.TRIP, mTrip)
             intent.putExtra(Constants.Intent.USER_DATA, mUser)
             startActivity(intent)
-            startActivity(intent)
             overridePendingTransition(0, 0)
             finish()
         }

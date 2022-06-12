@@ -5,18 +5,18 @@ import android.os.Parcelable
 
 data class MyPolyline(
     val points: ArrayList<MyPoint> = ArrayList(),
-    val color: String = "",
+    val color: Int = 0,
     val pattern: String = "",  // dot, dash, solid
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.createTypedArrayList(MyPoint.CREATOR)!!,
-        parcel.readString()!!,
+        parcel.readInt(),
         parcel.readString()!!
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeTypedList(points)
-        parcel.writeString(color)
+        parcel.writeInt(color)
         parcel.writeString(pattern)
     }
 

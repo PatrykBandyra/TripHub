@@ -3,7 +3,6 @@ package com.example.triphub.activities
 import android.app.Activity
 import android.content.DialogInterface
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
@@ -13,6 +12,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import com.example.triphub.BuildConfig
 import com.example.triphub.R
 import com.example.triphub.databinding.ActivityMyTripMapBinding
+import com.example.triphub.firebase.MyTripFireStore
+import com.example.triphub.models.*
 import com.example.triphub.utils.Constants
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -37,14 +38,24 @@ class MyTripMapActivity : BaseActivity<ActivityMyTripMapBinding>(), OnMapReadyCa
     GoogleMap.OnInfoWindowClickListener, GoogleMap.OnPolylineClickListener,
     GoogleMap.OnCircleClickListener, GoogleMap.OnPolygonClickListener {
 
+    private lateinit var mTrip: MyTrip
+    private lateinit var mUser: User
+
     private lateinit var mMap: GoogleMap
-    private lateinit var marker: Marker
 
     private var mMapInputType: String? = null
     private var mEditMode: Boolean = false
     private var mAddMode: Boolean = true
     private var mTempLocation: LatLng? = null
     private var mTempMarker: Marker? = null
+
+    // Marker
+    private enum class MarkerColor {
+        ORANGE, RED, GREEN
+    }
+
+    private var mMarkerColor = MarkerColor.ORANGE
+    private lateinit var mMarkerColorDescriptor: BitmapDescriptor
 
     // Circle
     private var mCircleFillColor: Int = Constants.Map.CIRCLE_DEFAULT_FILL_COLOR
@@ -55,7 +66,6 @@ class MyTripMapActivity : BaseActivity<ActivityMyTripMapBinding>(), OnMapReadyCa
     private var mPolygonFillColor: Int = Constants.Map.POLYGON_DEFAULT_FILL_COLOR
     private var mPolygonStrokeColor: Int = Constants.Map.POLYGON_DEFAULT_STROKE_COLOR
     private var mPolygonLineType: PolylineType = PolylineType.SOLID
-    private var mCurrentPolygon: Polygon? = null
     private var mCurrentPolygonPoints: ArrayList<LatLng>? = null
     private var mTempPolygonMarkers: ArrayList<Marker>? = null
 
@@ -82,6 +92,18 @@ class MyTripMapActivity : BaseActivity<ActivityMyTripMapBinding>(), OnMapReadyCa
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        if (intent.hasExtra(Constants.Intent.TRIP)) {
+            mTrip = intent.getParcelableExtra(Constants.Intent.TRIP)!!
+        } else {
+            throw Exception("${this::class.java.simpleName}: No MyTrip object provided")
+        }
+
+        if (intent.hasExtra(Constants.Intent.USER_DATA)) {
+            mUser = intent.getParcelableExtra(Constants.Intent.USER_DATA)!!
+        } else {
+            throw Exception("${this::class.java.simpleName}: No User object provided")
+        }
+
         setOnButtonClickedListeners()
         setUpTaskBarNavigation()
 
@@ -97,18 +119,27 @@ class MyTripMapActivity : BaseActivity<ActivityMyTripMapBinding>(), OnMapReadyCa
     }
 
     private fun setUpTaskBarNavigation() {
-        binding.ivPeople.setOnClickListener {
-            startActivity(Intent(this, MyTripPeopleActivity::class.java))
+        binding.ivBoard.setOnClickListener {
+            val intent = Intent(this, MyTripBoardActivity::class.java)
+            intent.putExtra(Constants.Intent.TRIP, mTrip)
+            intent.putExtra(Constants.Intent.USER_DATA, mUser)
+            startActivity(intent)
             overridePendingTransition(0, 0)
             finish()
         }
-        binding.ivBoard.setOnClickListener {
-            startActivity(Intent(this, MyTripBoardActivity::class.java))
+        binding.ivPeople.setOnClickListener {
+            val intent = Intent(this, MyTripPeopleActivity::class.java)
+            intent.putExtra(Constants.Intent.TRIP, mTrip)
+            intent.putExtra(Constants.Intent.USER_DATA, mUser)
+            startActivity(intent)
             overridePendingTransition(0, 0)
             finish()
         }
         binding.ivChat.setOnClickListener {
-            startActivity(Intent(this, MyTripChatActivity::class.java))
+            val intent = Intent(this, MyTripChatActivity::class.java)
+            intent.putExtra(Constants.Intent.TRIP, mTrip)
+            intent.putExtra(Constants.Intent.USER_DATA, mUser)
+            startActivity(intent)
             overridePendingTransition(0, 0)
             finish()
         }
@@ -176,7 +207,25 @@ class MyTripMapActivity : BaseActivity<ActivityMyTripMapBinding>(), OnMapReadyCa
         }
 
         // Marker click listeners
-        // TODO
+        binding.radioGroupMarkerColor.setOnCheckedChangeListener { _, checkedId ->
+            when (checkedId) {
+                binding.radioMarkerColorOrange.id -> {
+                    mMarkerColorDescriptor =
+                        BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)
+                    mMarkerColor = MarkerColor.ORANGE
+                }
+                binding.radioMarkerColorRed.id -> {
+                    mMarkerColorDescriptor =
+                        BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)
+                    mMarkerColor = MarkerColor.RED
+                }
+                binding.radioMarkerColorGreen.id -> {
+                    mMarkerColorDescriptor =
+                        BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)
+                    mMarkerColor = MarkerColor.GREEN
+                }
+            }
+        }
 
         // Circle click listeners
         binding.ibFillColor.setOnClickListener {
@@ -217,11 +266,23 @@ class MyTripMapActivity : BaseActivity<ActivityMyTripMapBinding>(), OnMapReadyCa
                 mIsPolylineBeingCreated = true
                 binding.btnPolylineStartStop.text = getString(R.string.stop)
             } else {
+                if (mCurrentPolylinePoints != null && mCurrentPolylinePoints!!.size >= 2) {
+                    val points: ArrayList<MyPoint> =
+                        ArrayList(mCurrentPolylinePoints!!.map { latLng ->
+                            MyPoint(latitude = latLng.latitude, longitude = latLng.longitude)
+                        })
+                    val polyline = MyPolyline(
+                        points = points,
+                        color = mPolylineColor,
+                        pattern = mPolylineType.toString()
+                    )
+                    mTrip.polylines.add(polyline)
+                    MyTripFireStore().updatePolylines(mTrip)
+                }
                 mIsPolylineBeingCreated = false
                 mCurrentPolyline = null
                 mCurrentPolylinePoints = null
                 binding.btnPolylineStartStop.text = getString(R.string.start)
-                // TODO: save polyline to database if has more than 1 points on map (is visible)
             }
         }
 
@@ -256,7 +317,6 @@ class MyTripMapActivity : BaseActivity<ActivityMyTripMapBinding>(), OnMapReadyCa
                 mIsPolygonBeingCreated = true
                 binding.btnPolygonStartStop.text = getString(R.string.stop)
             } else {
-
                 if (mCurrentPolygonPoints != null && mCurrentPolygonPoints!!.size >= 3) {
                     var pattern: List<PatternItem>? = null
                     if (mPolygonLineType == PolylineType.DASH) {
@@ -274,9 +334,20 @@ class MyTripMapActivity : BaseActivity<ActivityMyTripMapBinding>(), OnMapReadyCa
                         polygonOptions.strokePattern(pattern)
                     }
 
-                    mCurrentPolygon = mMap.addPolygon(polygonOptions)
+                    mMap.addPolygon(polygonOptions)
 
-                    // TODO: add polygon to db
+                    val points: ArrayList<MyPoint> =
+                        ArrayList(mCurrentPolygonPoints!!.map { latLng ->
+                            MyPoint(latitude = latLng.latitude, longitude = latLng.longitude)
+                        })
+                    val polygon = MyPolygon(
+                        points = points,
+                        fillColor = mPolygonFillColor,
+                        strokeColor = mPolygonStrokeColor,
+                        strokePattern = mPolygonLineType.toString()
+                    )
+                    mTrip.polygons.add(polygon)
+                    MyTripFireStore().updatePolygons(mTrip)
                 } else {
                     showErrorSnackBar(R.string.polygons_at_least_3_points)
                 }
@@ -285,11 +356,9 @@ class MyTripMapActivity : BaseActivity<ActivityMyTripMapBinding>(), OnMapReadyCa
                     marker.remove()
                 }
                 mIsPolygonBeingCreated = false
-                mCurrentPolygon = null
                 mCurrentPolygonPoints = null
                 mTempPolygonMarkers = null
                 binding.btnPolygonStartStop.text = getString(R.string.start)
-                // TODO: save polygon to database if is visible
             }
         }
     }
@@ -318,21 +387,25 @@ class MyTripMapActivity : BaseActivity<ActivityMyTripMapBinding>(), OnMapReadyCa
     private fun changeUIBasedOnInputType() {
         when (mMapInputType) {
             Constants.Navigation.MARKER -> {
+                binding.llMarkerType.visibility = View.VISIBLE
                 binding.llPolygonType.visibility = View.GONE
                 binding.llPolylineType.visibility = View.GONE
                 binding.llCircleType.visibility = View.GONE
             }
             Constants.Navigation.POLYLINE -> {
+                binding.llMarkerType.visibility = View.GONE
                 binding.llPolygonType.visibility = View.GONE
                 binding.llPolylineType.visibility = View.VISIBLE
                 binding.llCircleType.visibility = View.GONE
             }
             Constants.Navigation.POLYGON -> {
+                binding.llMarkerType.visibility = View.GONE
                 binding.llPolygonType.visibility = View.VISIBLE
                 binding.llPolylineType.visibility = View.GONE
                 binding.llCircleType.visibility = View.GONE
             }
             Constants.Navigation.CIRCLE -> {
+                binding.llMarkerType.visibility = View.GONE
                 binding.llPolygonType.visibility = View.GONE
                 binding.llPolylineType.visibility = View.GONE
                 binding.llCircleType.visibility = View.VISIBLE
@@ -361,24 +434,85 @@ class MyTripMapActivity : BaseActivity<ActivityMyTripMapBinding>(), OnMapReadyCa
     override fun onMapReady(googleMap: GoogleMap?) {
         mMap = googleMap!!
         mMap.mapType = GoogleMap.MAP_TYPE_HYBRID
-        val sydneyLoc = LatLng(-34.0, 151.0)
-        marker = mMap.addMarker(
-            MarkerOptions()
-                .position(sydneyLoc)
-                .draggable(true)
-                .rotation(90f)
-                .zIndex(1f)
-                .snippet("Additional text that is displayed below title")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_user_placeholder_image))
-                .title("Marker in Sydney")
-        )
+        mMarkerColorDescriptor =
+            BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)
 
-        val otherLoc = LatLng(-30.0, 130.0)
-        mMap.addMarker(
-            MarkerOptions()
-                .position(otherLoc)
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
-        )
+        mTrip.places.forEach { place ->
+            val markerColorDescriptor = when (place.markerColor) {
+                MarkerColor.ORANGE.toString() -> BitmapDescriptorFactory.defaultMarker(
+                    BitmapDescriptorFactory.HUE_ORANGE
+                )
+                MarkerColor.RED.toString() -> BitmapDescriptorFactory.defaultMarker(
+                    BitmapDescriptorFactory.HUE_RED
+                )
+                else -> BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)
+            }
+            mMap.addMarker(
+                MarkerOptions()
+                    .position(LatLng(place.latitude, place.longitude))
+                    .draggable(true)
+                    .title(place.title)
+                    .snippet(place.snippet)
+                    .icon(markerColorDescriptor)
+            )
+        }
+
+        mTrip.circles.forEach { circle ->
+            val latLng = LatLng(circle.latitude, circle.longitude)
+            mMap.addCircle(
+                CircleOptions()
+                    .center(latLng)
+                    .radius(circle.radius)
+                    .fillColor(circle.fillColor)
+                    .strokeColor(circle.strokeColor)
+                    .clickable(true)
+            )
+        }
+
+        mTrip.polylines.forEach { polyline ->
+            val pattern: List<PatternItem>? = when (polyline.pattern) {
+                PolylineType.DASH.toString() -> mutableListOf(Dash(30f), Gap(10f))
+                PolylineType.DOT.toString() -> mutableListOf(Dot(), Gap(10f))
+                else -> null
+            }
+
+            val polylineOptions = PolylineOptions()
+                .addAll(ArrayList<LatLng>(
+                    polyline.points.map { myPoint ->
+                        LatLng(myPoint.latitude, myPoint.longitude)
+                    }
+                ))
+                .color(polyline.color)
+                .clickable(true)
+            if (pattern != null) {
+                polylineOptions.pattern(pattern)
+            }
+
+            mMap.addPolyline(polylineOptions)
+        }
+
+        mTrip.polygons.forEach { polygon ->
+            val pattern: List<PatternItem>? = when (polygon.strokePattern) {
+                PolylineType.DASH.toString() -> mutableListOf(Dash(30f), Gap(10f))
+                PolylineType.DOT.toString() -> mutableListOf(Dot(), Gap(10f))
+                else -> null
+            }
+
+            val polygonOptions = PolygonOptions()
+                .addAll(ArrayList<LatLng>(
+                    polygon.points.map { myPoint ->
+                        LatLng(myPoint.latitude, myPoint.longitude)
+                    }
+                ))
+                .fillColor(polygon.fillColor)
+                .strokeColor(polygon.strokeColor)
+                .clickable(true)
+            if (pattern != null) {
+                polygonOptions.strokePattern(pattern)
+            }
+
+            mMap.addPolygon(polygonOptions)
+        }
 
         mMap.setOnMarkerClickListener(this)
         mMap.setOnMarkerDragListener(this)
@@ -388,47 +522,10 @@ class MyTripMapActivity : BaseActivity<ActivityMyTripMapBinding>(), OnMapReadyCa
         mMap.setOnCircleClickListener(this)
         mMap.setOnPolygonClickListener(this)
 
-        // Polyline
-        val pattern = mutableListOf(Dot(), Gap(10f))
-
-        val m1 = LatLng(20.0, 40.0)
-        val m2 = LatLng(65.0, 45.0)
-        val m3 = LatLng(30.0, 50.0)
-        val polylineOptions = PolylineOptions()
-            .add(m1)
-            .add(m2)
-            .add(m3)
-            .color(Color.CYAN)
-            .pattern(pattern)
-        val polyline = mMap.addPolyline(polylineOptions)
-        polyline.isClickable = true
-
-        // Polygon
-        val m11 = LatLng(10.0, 10.0)
-        val m22 = LatLng(20.0, 10.0)
-        val m33 = LatLng(20.0, 20.0)
-        val m44 = LatLng(10.0, 20.0)
-        val polygonOptions = PolygonOptions()
-            .addAll(mutableListOf(m11, m22, m33, m44))
-            .fillColor(0x7F00FF00)
-            .strokePattern(pattern)
-            .addHole(
-                mutableListOf(
-                    LatLng(14.0, 14.0),
-                    LatLng(15.0, 14.0),
-                    LatLng(15.0, 15.0),
-                    LatLng(14.0, 15.0)
-                )
-            )
-        val polygon = mMap.addPolygon(polygonOptions)
-
-        // Circle
-        val circleOptions = CircleOptions()
-            .center(LatLng(50.0, 50.0))
-            .radius(1000_000.0)  // in meters
-        val circle = mMap.addCircle(circleOptions)
-
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydneyLoc))
+        if (mTrip.places.size > 0) {
+            val latLng = LatLng(mTrip.places.last().latitude, mTrip.places.last().longitude)
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng))
+        }
     }
 
     override fun onMapClick(latLng: LatLng) {
@@ -441,14 +538,33 @@ class MyTripMapActivity : BaseActivity<ActivityMyTripMapBinding>(), OnMapReadyCa
     private fun performActionDependingOnMapInputType(latLng: LatLng) {
         when (mMapInputType) {
             Constants.Navigation.MARKER -> {
-                mMap.addMarker(
-                    MarkerOptions()
-                        .position(latLng)
-                        .draggable(true)
-                        .snippet("Additional text that is displayed below title")
-                        .title("Marker in Sydney")
-                )
-                // TODO: adding to database
+                if (mAddMode) {
+                    hideKeyboard()
+                    if (binding.etMarkerTitle.text.toString().isNotEmpty()) {
+                        mMap.addMarker(
+                            MarkerOptions()
+                                .position(latLng)
+                                .draggable(true)
+                                .title(binding.etMarkerTitle.text.toString())
+                                .snippet(binding.etMarkerSnippet.text.toString())
+                                .icon(mMarkerColorDescriptor)
+                        )
+
+                        val place = MyPlace(
+                            title = binding.etMarkerTitle.text.toString(),
+                            snippet = binding.etMarkerSnippet.text.toString(),
+                            latitude = latLng.latitude,
+                            longitude = latLng.longitude,
+                            markerColor = mMarkerColor.toString()
+                        )
+                        mTrip.places.add(place)
+                        MyTripFireStore().updatePlaces(mTrip)
+                        binding.etMarkerTitle.text?.clear()
+                        binding.etMarkerSnippet.text?.clear()
+                    } else {
+                        showErrorSnackBar(R.string.marker_title_empty_error_msg)
+                    }
+                }
             }
             Constants.Navigation.POLYLINE -> {
                 if (mAddMode) {
@@ -477,37 +593,42 @@ class MyTripMapActivity : BaseActivity<ActivityMyTripMapBinding>(), OnMapReadyCa
                 }
             }
             Constants.Navigation.POLYGON -> {
-                try {
-                    if (mAddMode) {
-                        if (mIsPolygonBeingCreated) {
-                            if (mCurrentPolygonPoints == null) {
-                                mCurrentPolygonPoints = arrayListOf(latLng)
-                            } else {
-                                mCurrentPolygonPoints!!.add(latLng)
-                            }
-                            val tempMarker = mMap.addMarker(MarkerOptions().position(latLng))
-                            if (mTempPolygonMarkers == null) {
-                                mTempPolygonMarkers = arrayListOf(tempMarker)
-                            } else {
-                                mTempPolygonMarkers!!.add(tempMarker)
-                            }
+                if (mAddMode) {
+                    if (mIsPolygonBeingCreated) {
+                        if (mCurrentPolygonPoints == null) {
+                            mCurrentPolygonPoints = arrayListOf(latLng)
+                        } else {
+                            mCurrentPolygonPoints!!.add(latLng)
+                        }
+                        val tempMarker = mMap.addMarker(MarkerOptions().position(latLng))
+                        if (mTempPolygonMarkers == null) {
+                            mTempPolygonMarkers = arrayListOf(tempMarker)
+                        } else {
+                            mTempPolygonMarkers!!.add(tempMarker)
                         }
                     }
-                } catch (e: Exception) {
-                    e.printStackTrace()
                 }
             }
             Constants.Navigation.CIRCLE -> {
                 if (mAddMode) {
                     if (validateCircleOptions()) {
-                        val circleOptions = CircleOptions()
-                            .center(latLng)
-                            .radius(binding.etCircleRadius.text.toString().toDouble())
-                            .fillColor(mCircleFillColor)
-                            .strokeColor(mCircleStrokeColor)
-                            .clickable(true)
-                        mMap.addCircle(circleOptions)
-                        // TODO: adding to database
+                        mMap.addCircle(
+                            CircleOptions()
+                                .center(latLng)
+                                .radius(binding.etCircleRadius.text.toString().toDouble())
+                                .fillColor(mCircleFillColor)
+                                .strokeColor(mCircleStrokeColor)
+                                .clickable(true)
+                        )
+                        val circle = MyCircle(
+                            latitude = latLng.latitude,
+                            longitude = latLng.longitude,
+                            radius = binding.etCircleRadius.text.toString().toDouble(),
+                            fillColor = mCircleFillColor,
+                            strokeColor = mCircleStrokeColor
+                        )
+                        mTrip.circles.add(circle)
+                        MyTripFireStore().updateCircles(mTrip)
                     }
                 }
             }
@@ -532,6 +653,11 @@ class MyTripMapActivity : BaseActivity<ActivityMyTripMapBinding>(), OnMapReadyCa
             mTempMarker?.remove()
         } else {
             if (mEditMode && !mAddMode) {
+                mTrip.places.removeIf { place ->
+                    place.latitude == marker.position.latitude && place.longitude == marker.position.longitude
+                            && place.title == marker.title
+                }
+                MyTripFireStore().updatePlaces(mTrip)
                 marker.remove()
             }
         }
@@ -556,6 +682,12 @@ class MyTripMapActivity : BaseActivity<ActivityMyTripMapBinding>(), OnMapReadyCa
 
     override fun onPolylineClick(polyline: Polyline) {
         if (mEditMode && !mAddMode) {
+            mTrip.polylines.removeIf { myPolyline ->
+                myPolyline.points.containsAll(ArrayList<MyPoint>(polyline.points.map { latLng ->
+                    MyPoint(latitude = latLng.latitude, longitude = latLng.longitude)
+                }))
+            }
+            MyTripFireStore().updatePolylines(mTrip)
             polyline.remove()
             mCurrentPolyline = null
             mCurrentPolylinePoints = null
@@ -566,12 +698,23 @@ class MyTripMapActivity : BaseActivity<ActivityMyTripMapBinding>(), OnMapReadyCa
 
     override fun onCircleClick(circle: Circle) {
         if (mEditMode && !mAddMode) {
+            mTrip.circles.removeIf { myCircle ->
+                myCircle.latitude == circle.center.latitude && myCircle.longitude == circle.center.longitude
+                        && myCircle.radius == circle.radius
+            }
+            MyTripFireStore().updateCircles(mTrip)
             circle.remove()
         }
     }
 
     override fun onPolygonClick(polygon: Polygon) {
         if (mEditMode && !mAddMode) {
+            mTrip.polygons.removeIf { myPolygon ->
+                myPolygon.points.containsAll(ArrayList<MyPoint>(polygon.points.map { latLng ->
+                    MyPoint(latitude = latLng.latitude, longitude = latLng.longitude)
+                }))
+            }
+            MyTripFireStore().updatePolygons(mTrip)
             polygon.remove()
         }
     }

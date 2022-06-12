@@ -167,6 +167,12 @@
     <string name="start">Start</string>
     <string name="stop">Stop</string>
     <string name="polygons_at_least_3_points">Polygons should have at least 3 points</string>
+    <string name="title">Title</string>
+    <string name="snippet">Snippet</string>
+    <string name="orange">Orange</string>
+    <string name="red">Red</string>
+    <string name="green">Green</string>
+    <string name="marker_title_empty_error_msg">Marker title field must not be empty</string>
     <!--  !Trip Screen  -->
 
 </resources>

@@ -8,7 +8,10 @@ import com.example.triphub.adapters.MyTripsAdapter
 import com.example.triphub.models.MyTrip
 import com.example.triphub.models.User
 import com.example.triphub.utils.Constants
-import com.google.firebase.firestore.*
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.toObject
 
 class MyTripFireStore : FireStoreBaseClass() {
@@ -194,4 +197,39 @@ class MyTripFireStore : FireStoreBaseClass() {
             }
     }
 
+    fun updatePlaces(myTrip: MyTrip) {
+        val placesHashmap = HashMap<String, Any>()
+        placesHashmap[Constants.Models.MyTrip.PLACES] = myTrip.places
+
+        mFireStore.collection(Constants.Models.MyTrip.MY_TRIPS)
+            .document(myTrip.documentId)
+            .update(placesHashmap)
+    }
+
+    fun updateCircles(myTrip: MyTrip) {
+        val circlesHashmap = HashMap<String, Any>()
+        circlesHashmap[Constants.Models.MyTrip.CIRCLES] = myTrip.circles
+
+        mFireStore.collection(Constants.Models.MyTrip.MY_TRIPS)
+            .document(myTrip.documentId)
+            .update(circlesHashmap)
+    }
+
+    fun updatePolylines(myTrip: MyTrip) {
+        val polylinesHashmap = HashMap<String, Any>()
+        polylinesHashmap[Constants.Models.MyTrip.POLYLINES] = myTrip.polylines
+
+        mFireStore.collection(Constants.Models.MyTrip.MY_TRIPS)
+            .document(myTrip.documentId)
+            .update(polylinesHashmap)
+    }
+
+    fun updatePolygons(myTrip: MyTrip) {
+        val polygonsHashmap = HashMap<String, Any>()
+        polygonsHashmap[Constants.Models.MyTrip.POLYGONS] = myTrip.polygons
+
+        mFireStore.collection(Constants.Models.MyTrip.MY_TRIPS)
+            .document(myTrip.documentId)
+            .update(polygonsHashmap)
+    }
 }

@@ -407,7 +407,7 @@
                     android:orientation="horizontal"
                     android:visibility="gone"
                     app:layout_constraintBottom_toTopOf="@+id/llFindPLace"
-                    tools:visibility="visible">
+                    tools:visibility="gone">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="wrap_content"
@@ -530,8 +530,115 @@
                             android:layout_gravity="center"
                             android:layout_marginStart="10dp"
                             android:layout_weight="1"
-                            android:textSize="12sp"
-                            android:text="@string/start" />
+                            android:text="@string/start"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/llMarkerType"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toTopOf="@+id/llFindPLace"
+                    tools:visibility="visible">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="1">
+
+                        <androidx.appcompat.widget.AppCompatEditText
+                            android:id="@+id/etMarkerTitle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/white"
+                            android:hint="@string/title"
+                            android:maxLines="1"
+                            android:scrollHorizontally="true"
+                            android:textColor="@color/secondary_text_color"
+                            android:textSize="@dimen/et_text_size" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="1">
+
+                        <androidx.appcompat.widget.AppCompatEditText
+                            android:id="@+id/etMarkerSnippet"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/white"
+                            android:hint="@string/snippet"
+                            android:maxLines="1"
+                            android:scrollHorizontally="true"
+                            android:textColor="@color/secondary_text_color"
+                            android:textSize="@dimen/et_text_size" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:paddingTop="10dp">
+
+                        <RadioGroup
+                            android:id="@+id/radioGroupMarkerColor"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center|top"
+                            android:layout_marginHorizontal="2dp"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:padding="2dp">
+
+                            <RadioButton
+                                android:id="@+id/radioMarkerColorOrange"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/radio_selector"
+                                android:button="@android:color/transparent"
+                                android:checked="true"
+                                android:gravity="center"
+                                android:text="@string/orange"
+                                android:textColor="@drawable/radio_selector_text_color"
+                                android:textSize="10sp"
+                                tools:ignore="SmallSp" />
+
+                            <RadioButton
+                                android:id="@+id/radioMarkerColorRed"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/radio_selector"
+                                android:button="@android:color/transparent"
+                                android:gravity="center"
+                                android:text="@string/red"
+                                android:textColor="@drawable/radio_selector_text_color"
+                                android:textSize="10sp"
+                                tools:ignore="SmallSp" />
+
+                            <RadioButton
+                                android:id="@+id/radioMarkerColorGreen"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/radio_selector"
+                                android:button="@android:color/transparent"
+                                android:gravity="center"
+                                android:text="@string/green"
+                                android:textColor="@drawable/radio_selector_text_color"
+                                android:textSize="10sp"
+                                tools:ignore="SmallSp" />
+                        </RadioGroup>
                     </LinearLayout>
                 </LinearLayout>
 
