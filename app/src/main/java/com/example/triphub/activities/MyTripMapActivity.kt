@@ -127,6 +127,14 @@ class MyTripMapActivity : BaseActivity<ActivityMyTripMapBinding>(), OnMapReadyCa
             overridePendingTransition(0, 0)
             finish()
         }
+        binding.ivEvent.setOnClickListener {
+            val intent = Intent(this, MyTripEventActivity::class.java)
+            intent.putExtra(Constants.Intent.TRIP, mTrip)
+            intent.putExtra(Constants.Intent.USER_DATA, mUser)
+            startActivity(intent)
+            overridePendingTransition(0, 0)
+            finish()
+        }
         binding.ivPeople.setOnClickListener {
             val intent = Intent(this, MyTripPeopleActivity::class.java)
             intent.putExtra(Constants.Intent.TRIP, mTrip)

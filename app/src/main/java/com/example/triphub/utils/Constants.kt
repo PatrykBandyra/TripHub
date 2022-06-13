@@ -84,4 +84,13 @@ object Constants {
         val POLYGON_DEFAULT_FILL_COLOR: Int = Color.parseColor("#FF000000")
         val POLYGON_DEFAULT_STROKE_COLOR: Int = Color.parseColor("#FF000000")
     }
+
+    object Weather {
+        const val APP_ID: String = "2ef2bb38121ce6df83082325abb06c5b"
+        const val BASE_URL: String = "https://api.openweathermap.org/data/"
+        const val METRIC_UNIT: String = "metric"
+
+        const val PREFERENCE_NAME = "WeatherAppPreference"
+        const val WEATHER_RESPONSE_DATA = "weather_response_data"
+    }
 }

@@ -1,11 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".activities.MyTripBoardActivity">
+    android:background="@drawable/background"
+    tools:context=".activities.MyTripPeopleActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBar"
@@ -45,7 +44,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="@drawable/trip_icons_border"
                     android:contentDescription="@string/board"
                     android:gravity="center"
                     android:paddingVertical="10dp"
@@ -75,6 +73,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
+                    android:background="@drawable/trip_icons_border"
                     android:contentDescription="@string/event"
                     android:gravity="center"
                     android:paddingVertical="10dp"
@@ -85,13 +84,33 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/background"
-        android:padding="@dimen/task_list_content_padding">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/appBar">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_task_list"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cvEvents"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/card_view_people_margin"
+            android:layout_weight="30"
+            android:elevation="@dimen/card_view_elevation"
+            app:cardCornerRadius="@dimen/card_view_corner_radius">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvEvents"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:minHeight="@dimen/recycler_view_people_min_height" />
+        </androidx.cardview.widget.CardView>
+
+        <Button
+            android:id="@+id/btnAddEvent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/add_person_btn_margin"
+            android:layout_weight="1"
+            android:text="@string/add_event" />
     </LinearLayout>
-</LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

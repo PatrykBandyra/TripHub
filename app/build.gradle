@@ -82,4 +82,11 @@ dependencies {
 
     // Color Picker
     implementation "com.github.skydoves:colorpickerpreference:2.0.6"
+
+    // GSON
+    implementation 'com.google.code.gson:gson:2.9.0'
+
+    // Retrofit - HTTP client
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
 }

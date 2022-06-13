@@ -68,6 +68,16 @@
                     android:gravity="center"
                     android:paddingVertical="10dp"
                     android:src="@drawable/ic_chat" />
+
+                <ImageView
+                    android:id="@+id/ivEvent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:contentDescription="@string/event"
+                    android:gravity="center"
+                    android:paddingVertical="10dp"
+                    android:src="@drawable/ic_event" />
             </LinearLayout>
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
