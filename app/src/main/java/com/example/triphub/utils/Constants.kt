@@ -1,6 +1,7 @@
 package com.example.triphub.utils
 
 import android.graphics.Color
+import com.example.triphub.BuildConfig
 
 object Constants {
 
@@ -86,7 +87,7 @@ object Constants {
     }
 
     object Weather {
-        const val APP_ID: String = "2ef2bb38121ce6df83082325abb06c5b"
+        const val APP_ID: String = BuildConfig.WEATHER_APP_ID
         const val BASE_URL: String = "https://api.openweathermap.org/data/"
         const val METRIC_UNIT: String = "metric"
 
