@@ -178,6 +178,8 @@
     <string name="create_event">Create Event</string>
     <string name="date">Date</string>
     <string name="fill_in_all_fields">Fill in all fields</string>
+    <string name="check_weather">Check Weather</string>
+    <string name="miles_per_hour">miles/hour</string>
     <!--  !Trip Screen  -->
 
 </resources>

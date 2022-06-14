@@ -101,8 +101,16 @@
                 android:id="@+id/rvEvents"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:minHeight="@dimen/recycler_view_people_min_height" />
+                android:minHeight="550dp" />
         </androidx.cardview.widget.CardView>
+
+        <Button
+            android:id="@+id/btnCheckWeather"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/add_person_btn_margin"
+            android:layout_weight="1"
+            android:text="@string/check_weather" />
 
         <Button
             android:id="@+id/btnAddEvent"
